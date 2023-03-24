@@ -38,7 +38,7 @@ ThrottleDetector::ThrottleDetector(Throttle *throttle) {
     config = (PotThrottleConfiguration *) throttle->getConfiguration();
     state = DoNothing;
     maxThrottleReadingDeviationPercent = 100; // 10% in 0-1000 scale
-    Logger::debug("ThrottleDetector constructed with throttle %d", throttle);
+    Logger::log("ThrottleDetector constructed with throttle %d", throttle);
     resetValues();
 }
 
@@ -196,7 +196,7 @@ void ThrottleDetector::detectMaxCalibrate() {
             throttle2Min = throttle2MinRest;
         }
 
-        Logger::debug("Inverse: %s, throttle2Min: %d, throttle2Max: %d", (throttle2Inverse?"true":"false"), throttle2Min, throttle2Max);
+        Logger::log("Inverse: %s, throttle2Min: %d, throttle2Max: %d", (throttle2Inverse?"true":"false"), throttle2Min, throttle2Max);
 
         // fluctuation percentages - make sure not to divide by zero
         if (!(throttle1Max == throttle1Min))
@@ -230,7 +230,7 @@ void ThrottleDetector::detectMaxCalibrate() {
             linearCount += checkLinear(value1, value2);
             inverseCount += checkInverse(value1, value2);
 
-            //Logger::debug("T1: %d, T2: %d = NT1: %d, NT2: %d, L: %d, I: %d", throttle1Values[i], throttle2Values[i], value1, value2, linearCount, inverseCount);
+            //Logger::log("T1: %d, T2: %d = NT1: %d, NT2: %d, L: %d, I: %d", throttle1Values[i], throttle2Values[i], value1, value2, linearCount, inverseCount);
         }
 
         throttleSubType = 0;

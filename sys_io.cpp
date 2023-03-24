@@ -82,7 +82,7 @@ void SystemIO::setup_ADC_params()
     //requires the value to be contiguous in memory
     for (i = 0; i < 7; i++) {
         if (adc_comp[i].gain == 0xFFFF) adc_comp[i].gain = 1024;
-        Logger::debug("ADC:%d GAIN: %d Offset: %d", i, adc_comp[i].gain, adc_comp[i].offset);
+        Logger::log("ADC:%d GAIN: %d Offset: %d", i, adc_comp[i].gain, adc_comp[i].offset);
     }
 }
 
@@ -101,7 +101,7 @@ void SystemIO::setup() {
     //the pin tables.
 
     // TODO check pins
-    Logger::info("Running on GEVCU 6.2 hardware");
+    Logger::log("Running on GEVCU 6.2 hardware");
     dig[0]=48;
     dig[1]=49;
     dig[2]=50;
@@ -158,7 +158,7 @@ bool SystemIO::setupSPIADC()
         SPI.beginTransaction(spi_settings);
         SPI.transfer(0);
         SPI.endTransaction();
-        Logger::info("Trying to wait ADC1 as ready");
+        Logger::log("Trying to wait ADC1 as ready");
         SPI.beginTransaction(spi_settings);
         digitalWrite(CS1, LOW); //select first ADC chip
         SPI.transfer(ADE7913_READ | ADE7913_STATUS0);
@@ -172,7 +172,7 @@ bool SystemIO::setupSPIADC()
         else
         {
             sysioState = SYSSTATE_ADC1OK;
-            Logger::info("ADC1 is ready. Trying to enable clock out");
+            Logger::log("ADC1 is ready. Trying to enable clock out");
             //Now enable the CLKOUT function on first unit so that the other two will wake up
             SPI.beginTransaction(spi_settings);
             digitalWrite(CS1, LOW);
@@ -232,7 +232,7 @@ bool SystemIO::setupSPIADC()
             digitalWrite(CS3, HIGH);
             SPI.endTransaction();
       
-            Logger::info("ADC chips 2 and 3 have been successfully started!");
+            Logger::log("ADC chips 2 and 3 have been successfully started!");
             sysioState = SYSSTATE_INITIALIZED;
         }
         break;
@@ -247,11 +247,11 @@ void SystemIO::installExtendedIO(CANIODevice *device)
     bool found = false;
     int counter;
     
-    //Logger::debug("Before adding extended IO counts are DI:%i DO:%i AI:%i AO:%i", numDigIn, numDigOut, numAnaIn, numAnaOut);
-    //Logger::debug("Num Analog Inputs: %i", device->getAnalogInputCount());
-    //Logger::debug("Num Analog Outputs: %i", device->getAnalogOutputCount());
-    //Logger::debug("Num Digital Inputs: %i", device->getDigitalInputCount());
-    //Logger::debug("Num Digital Outputs: %i", device->getDigitalOutputCount());
+    //Logger::log("Before adding extended IO counts are DI:%i DO:%i AI:%i AO:%i", numDigIn, numDigOut, numAnaIn, numAnaOut);
+    //Logger::log("Num Analog Inputs: %i", device->getAnalogInputCount());
+    //Logger::log("Num Analog Outputs: %i", device->getAnalogOutputCount());
+    //Logger::log("Num Digital Inputs: %i", device->getDigitalInputCount());
+    //Logger::log("Num Digital Outputs: %i", device->getDigitalOutputCount());
    
     if (device->getAnalogInputCount() > 0)
     {
@@ -352,7 +352,7 @@ void SystemIO::installExtendedIO(CANIODevice *device)
         else break;
     }
     numAnaOut = numAO;
-    Logger::debug("After added extended IO the counts are DI:%i DO:%i AI:%i AO:%i", numDigIn, numDigOut, numAnaIn, numAnaOut);
+    Logger::log("After added extended IO the counts are DI:%i DO:%i AI:%i AO:%i", numDigIn, numDigOut, numAnaIn, numAnaOut);
 }
 
 int SystemIO::numDigitalInputs()
@@ -558,7 +558,7 @@ int32_t SystemIO::getSPIADCReading(int CS, int sensor)
     
     if (!isInitialized()) return 0;
     
-    //Logger::debug("SPI Read CS: %i Sensor: %i", CS, sensor);
+    //Logger::log("SPI Read CS: %i Sensor: %i", CS, sensor);
     SPI.beginTransaction(spi_settings);
     digitalWrite(CS, LOW);
     if (sensor == 0) SPI.transfer(ADE7913_READ | ADE7913_AMP_READING);

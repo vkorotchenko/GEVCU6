@@ -65,7 +65,7 @@ void TickHandler::attach(TickObserver *observer, uint32_t interval)
         timer = findTimer(0); // no timer with given tick interval exist -> look for unused (interval == 0)
         if (timer == -1)
         {
-            Logger::debug("No free timer available for interval=%d", interval);
+            Logger::log("No free timer available for interval=%d", interval);
             return;
         }
         timerEntry[timer].interval = interval;
@@ -74,11 +74,11 @@ void TickHandler::attach(TickObserver *observer, uint32_t interval)
     int observerIndex = findObserver(timer, 0);
     if (observerIndex == -1)
     {
-        Logger::debug("No free observer slot for timer %d with interval %d", timer, timerEntry[timer].interval);
+        Logger::log("No free observer slot for timer %d with interval %d", timer, timerEntry[timer].interval);
         return;
     }
     timerEntry[timer].observer[observerIndex] = observer;
-    Logger::debug("attached TickObserver (%X) as number %d to timer %d, %dus interval", observer, observerIndex, timer, interval);
+    Logger::log("attached TickObserver (%X) as number %d to timer %d, %dus interval", observer, observerIndex, timer, interval);
 
     switch (timer)
     { // restarting a timer which would already be running is no problem (see evTimer.cpp)
@@ -123,7 +123,7 @@ void TickHandler::detach(TickObserver *observer)
         {
             if (timerEntry[timer].observer[observerIndex] == observer)
             {
-                Logger::debug("removing TickObserver (%X) as number %d from timer %d", observer, observerIndex, timer);
+                Logger::log("removing TickObserver (%X) as number %d from timer %d", observer, observerIndex, timer);
                 timerEntry[timer].observer[observerIndex] = NULL;
             }
         }
@@ -166,7 +166,7 @@ void TickHandler::process()
     {
         tickBuffer[bufferTail]->handleTick();
         bufferTail = (bufferTail + 1) % CFG_TIMER_BUFFER_SIZE;
-        // Logger::debug("process, bufferHead=%d bufferTail=%d", bufferHead, bufferTail);
+        // Logger::log("process, bufferHead=%d bufferTail=%d", bufferHead, bufferTail);
     }
 }
 
@@ -190,7 +190,7 @@ void TickHandler::handleInterrupt(int timerNumber)
 #ifdef CFG_TIMER_USE_QUEUING
             tickBuffer[bufferHead] = timerEntry[timerNumber].observer[i];
             bufferHead = (bufferHead + 1) % CFG_TIMER_BUFFER_SIZE;
-// Logger::debug("bufferHead=%d, bufferTail=%d, observer=%d", bufferHead, bufferTail, timerEntry[timerNumber].observer[i]);
+// Logger::log("bufferHead=%d, bufferTail=%d, observer=%d", bufferHead, bufferTail, timerEntry[timerNumber].observer[i]);
 #else
             timerEntry[timerNumber].observer[i]->handleTick();
 #endif // CFG_TIMER_USE_QUEUING
@@ -268,7 +268,7 @@ void timer8Interrupt()
  */
 void TickObserver::handleTick()
 {
-    Logger::debug("TickObserver does not implement handleTick()");
+    Logger::log("TickObserver does not implement handleTick()");
 }
 
 TickHandler tickHandler;

@@ -37,10 +37,8 @@ public:
     enum LogLevel {
         Debug = 0, Info = 1
     };
-    static void debug(const char *, ...);
-    static void debug(DeviceId, const char *, ...);
-    static void info(const char *, ...);
-    static void info(DeviceId, const char *, ...);
+    static void log(const char *, ...);
+    static void log(DeviceId, const char *, ...);
     static void console(const char *, ...);
     static LogLevel getLogLevel();
     static uint32_t getLastLogTime();

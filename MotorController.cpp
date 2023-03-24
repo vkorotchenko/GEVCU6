@@ -141,7 +141,7 @@ void MotorController::handleTick() {
         throttleRequested = accelerator->getLevel();
     if (brake && brake->getLevel() < -10 && brake->getLevel() < accelerator->getLevel()) //if the brake has been pressed it overrides the accelerator.
         throttleRequested = brake->getLevel();
-    //Logger::debug("Throttle: %d", throttleRequested);
+    //Logger::log("Throttle: %d", throttleRequested);
 
     if (!donePrecharge)checkPrecharge();
 
@@ -240,8 +240,8 @@ void MotorController::checkPrecharge()
             statusBitfield1 |=1 << relay; //set bit to turn ON precharge OUTPUT annunciator
             throttleRequested = 0; //Keep throttle at zero during precharge
             prelay=true;
-            Logger::info("Starting precharge sequence - wait %i milliseconds", prechargetime);
-            Logger::info("PRECHARGE ENABLED...DOUT0:%d, DOUT1:%d, DOUT2:%d, DOUT3:%d,DOUT4:%d, DOUT5:%d, DOUT6:%d, DOUT7:%d", 
+            Logger::log("Starting precharge sequence - wait %i milliseconds", prechargetime);
+            Logger::log("PRECHARGE ENABLED...DOUT0:%d, DOUT1:%d, DOUT2:%d, DOUT3:%d,DOUT4:%d, DOUT5:%d, DOUT6:%d, DOUT7:%d", 
                 systemIO.getDigitalOutput(0), systemIO.getDigitalOutput(1), systemIO.getDigitalOutput(2), systemIO.getDigitalOutput(3),
                 systemIO.getDigitalOutput(4), systemIO.getDigitalOutput(5), systemIO.getDigitalOutput(6), systemIO.getDigitalOutput(7));
 
@@ -252,8 +252,8 @@ void MotorController::checkPrecharge()
         systemIO.setDigitalOutput(contactor, 1); //Main contactor on
         statusBitfield2 |=1 << 17; //set bit to turn on MAIN CONTACTOR annunciator
         statusBitfield1 |=1 << contactor;//setbit to Turn on main contactor output annunciator
-        Logger::info("Precharge sequence complete after %i milliseconds", prechargetime);
-        Logger::info("MAIN CONTACTOR ENABLED...DOUT0:%d, DOUT1:%d, DOUT2:%d, DOUT3:%d,DOUT4:%d, DOUT5:%d, DOUT6:%d, DOUT7:%d", 
+        Logger::log("Precharge sequence complete after %i milliseconds", prechargetime);
+        Logger::log("MAIN CONTACTOR ENABLED...DOUT0:%d, DOUT1:%d, DOUT2:%d, DOUT3:%d,DOUT4:%d, DOUT5:%d, DOUT6:%d, DOUT7:%d", 
                     systemIO.getDigitalOutput(0), systemIO.getDigitalOutput(1), systemIO.getDigitalOutput(2), systemIO.getDigitalOutput(3),
                     systemIO.getDigitalOutput(4), systemIO.getDigitalOutput(5), systemIO.getDigitalOutput(6), systemIO.getDigitalOutput(7));
         donePrecharge=true; //Time's up.  Let's don't do ANY of this on future ticks.
@@ -559,7 +559,7 @@ void MotorController::loadConfiguration() {
 
     Device::loadConfiguration(); // call parent
 
-    Logger::info((char *)Constants::invalidChecksum);
+    Logger::log((char *)Constants::invalidChecksum);
     config->speedMax = MaxRPMValue;
     config->torqueMax = MaxTorqueValue;
     config->speedSlewRate = RPMSlewRateValue;
@@ -581,7 +581,7 @@ void MotorController::loadConfiguration() {
     config->regenTaperUpper = RegenTaperUpper;
 
 
-    Logger::info("MaxTorque: %i MaxRPM: %i", config->torqueMax, config->speedMax);
+    Logger::log("MaxTorque: %i MaxRPM: %i", config->torqueMax, config->speedMax);
 }
 
 

@@ -26,7 +26,7 @@
 
 #include "Logger.h"
 
-Logger::LogLevel Logger::logLevel = Logger::Info;
+Logger::LogLevel Logger::logLevel = Logger::log;
 uint32_t Logger::lastLogTime = 0;
 
 /*
@@ -34,7 +34,7 @@ uint32_t Logger::lastLogTime = 0;
  * printf() style, see Logger::log()
  *
  */
-void Logger::debug(const char *message, ...) {
+void Logger::log(const char *message, ...) {
     if (logLevel > Debug)
         return;
     va_list args;
@@ -47,38 +47,12 @@ void Logger::debug(const char *message, ...) {
  * Output a debug message with the name of a device appended before the message
  * printf() style, see Logger::log()
  */
-void Logger::debug(DeviceId deviceId, const char *message, ...) {
+void Logger::log(DeviceId deviceId, const char *message, ...) {
     if (logLevel > Debug)
         return;
     va_list args;
     va_start(args, message);
     Logger::log(deviceId, Debug, message, args);
-    va_end(args);
-}
-
-/*
- * Output a info message with a variable amount of parameters
- * printf() style, see Logger::log()
- */
-void Logger::info(const char *message, ...) {
-    if (logLevel > Info)
-        return;
-    va_list args;
-    va_start(args, message);
-    Logger::log((DeviceId) NULL, Info, message, args);
-    va_end(args);
-}
-
-/*
- * Output a info message with the name of a device appended before the message
- * printf() style, see Logger::log()
- */
-void Logger::info(DeviceId deviceId, const char *message, ...) {
-    if (logLevel > Info)
-        return;
-    va_list args;
-    va_start(args, message);
-    Logger::log(deviceId, Info, message, args);
     va_end(args);
 }
 
@@ -91,34 +65,6 @@ void Logger::console(const char *message, ...) {
     va_start(args, message);
     Logger::logMessage(message, args);
     va_end(args);
-}
-
-/*
- * Retrieve the current log level.
- */
-Logger::LogLevel Logger::getLogLevel() {
-    return logLevel;
-}
-
-/*
- * Return a timestamp when the last log entry was made.
- */
-uint32_t Logger::getLastLogTime() {
-    return lastLogTime;
-}
-
-/*
- * Returns if debug log level is enabled. This can be used in time critical
- * situations to prevent unnecessary string concatenation (if the message won't
- * be logged in the end).
- *
- * Example:
- * if (Logger::isDebug()) {
- *    Logger::debug("current time: %d", millis());
- * }
- */
-boolean Logger::isDebug() {
-    return logLevel == Debug;
 }
 
 /*
@@ -144,15 +90,7 @@ void Logger::log(DeviceId deviceId, LogLevel level, const char *format, va_list 
     Serial.print(lastLogTime);
     Serial.print(" - ");
 
-    switch (level) {
-    case Debug:
-        Serial.print("DEBUG");
-        break;
-    case Info:
-        Serial.print("INFO");
-        break;
-    }
-    Serial.print(": ");
+    Serial.print("LOG: ");
 
     if (deviceId)
         printDeviceName(deviceId);

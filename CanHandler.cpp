@@ -59,7 +59,7 @@ void CanHandler::setup()
     }
 
 
-    Logger::info("CAN init ok. Speed = %i", CAN_500KBPS);
+    Logger::log("CAN init ok. Speed = %i", CAN_500KBPS);
 }
 
 uint32_t CanHandler::getBusSpeed()
@@ -82,7 +82,7 @@ void CanHandler::attach(CanObserver *observer, uint32_t id, uint32_t mask, bool 
 
     if (pos == -1)
     {
-        Logger::debug("no free space in CanHandler::observerData, increase its size via CFG_CAN_NUM_OBSERVERS");
+        Logger::log("no free space in CanHandler::observerData, increase its size via CFG_CAN_NUM_OBSERVERS");
         return;
     }
 
@@ -94,7 +94,7 @@ void CanHandler::attach(CanObserver *observer, uint32_t id, uint32_t mask, bool 
     CAN.init_Filt(pos, extended, id);
     CAN.init_Mask(pos, extended, (unsigned long)mask);
 
-    Logger::debug("attached CanObserver (%X) for id=%X, mask=%X", observer, id, mask);
+    Logger::log("attached CanObserver (%X) for id=%X, mask=%X", observer, id, mask);
 }
 
 /*
@@ -126,7 +126,7 @@ void CanHandler::logFrame(CAN_FRAME &frame)
 {
     if (Logger::isDebug())
     {
-        Logger::debug("CAN: dlc=%X fid=%X id=%X ide=%X rtr=%X data=%X,%X,%X,%X,%X,%X,%X,%X",
+        Logger::log("CAN: dlc=%X fid=%X id=%X ide=%X rtr=%X data=%X,%X,%X,%X,%X,%X,%X,%X",
                       frame.length, frame.fid, frame.id, frame.extended, frame.rtr,
                       frame.data.bytes[0], frame.data.bytes[1], frame.data.bytes[2], frame.data.bytes[3],
                       frame.data.bytes[4], frame.data.bytes[5], frame.data.bytes[6], frame.data.bytes[7]);
@@ -178,7 +178,7 @@ void CanHandler::process()
         frame.extended = (bool)CAN.isExtendedFrame();
         frame.rtr = CAN.isRemoteRequest();
 
-        Logger::debug("CAN:%d dlc=%X fid=%X id=%X ide=%X rtr=%X data=%X,%X,%X,%X,%X,%X,%X,%X", 0,
+        Logger::log("CAN:%d dlc=%X fid=%X id=%X ide=%X rtr=%X data=%X,%X,%X,%X,%X,%X,%X,%X", 0,
                       frame.length, frame.fid, frame.id, frame.extended, frame.rtr,
                       frame.data.bytes[0], frame.data.bytes[1], frame.data.bytes[2], frame.data.bytes[3],
                       frame.data.bytes[4], frame.data.bytes[5], frame.data.bytes[6], frame.data.bytes[7]);
@@ -276,7 +276,7 @@ void CanHandler::CANIO(CAN_FRAME &frame)
     static CAN_FRAME CANioFrame;
     int i;
 
-    Logger::info("CANIO %d msg: %X   %X   %X   %X   %X   %X   %X   %X  %X", 0, frame.id, frame.data.bytes[0],
+    Logger::log("CANIO %d msg: %X   %X   %X   %X   %X   %X   %X   %X  %X", 0, frame.id, frame.data.bytes[0],
                  frame.data.bytes[1], frame.data.bytes[2], frame.data.bytes[3], frame.data.bytes[4],
                  frame.data.bytes[5], frame.data.bytes[6], frame.data.bytes[7]);
 
@@ -335,7 +335,7 @@ void CanHandler::CANIO(CAN_FRAME &frame)
 void CanHandler::sendFrame(CAN_FRAME &frame)
 {
 
-    Logger::info("CANIO %d msg: %X   %X   %X   %X   %X   %X   %X   %X  %X", 0, frame.id, frame.data.bytes[0],
+    Logger::log("CANIO %d msg: %X   %X   %X   %X   %X   %X   %X   %X  %X", 0, frame.id, frame.data.bytes[0],
                  frame.data.bytes[1], frame.data.bytes[2], frame.data.bytes[3], frame.data.bytes[4],
                  frame.data.bytes[5], frame.data.bytes[6], frame.data.bytes[7]);
 
@@ -537,20 +537,20 @@ bool CanObserver::isCANOpen()
  */
 void CanObserver::handleCanFrame(CAN_FRAME *frame)
 {
-    Logger::debug("CanObserver does not implement handleCanFrame(), frame.id=%d", frame->id);
+    Logger::log("CanObserver does not implement handleCanFrame(), frame.id=%d", frame->id);
 }
 
 void CanObserver::handlePDOFrame(CAN_FRAME *frame)
 {
-    Logger::debug("CanObserver does not implement handlePDOFrame(), frame.id=%d", frame->id);
+    Logger::log("CanObserver does not implement handlePDOFrame(), frame.id=%d", frame->id);
 }
 
 void CanObserver::handleSDORequest(SDO_FRAME *frame)
 {
-    Logger::debug("CanObserver does not implement handleSDORequest(), frame.id=%d", frame->nodeID);
+    Logger::log("CanObserver does not implement handleSDORequest(), frame.id=%d", frame->nodeID);
 }
 
 void CanObserver::handleSDOResponse(SDO_FRAME *frame)
 {
-    Logger::debug("CanObserver does not implement handleSDOResponse(), frame.id=%d", frame->nodeID);
+    Logger::log("CanObserver does not implement handleSDOResponse(), frame.id=%d", frame->nodeID);
 }
