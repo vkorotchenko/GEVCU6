@@ -40,8 +40,7 @@
 /*
  * The extended configuration class with additional parameters for PotBrake
  *
- * NOTE: Because of ThrottleDetector, this currently MUST be the same as PotThrottleConfiguratin !!!
- */
+] */
 class PotBrakeConfiguration: public PotThrottleConfiguration {
 public:
 };
