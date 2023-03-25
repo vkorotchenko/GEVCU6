@@ -82,7 +82,6 @@ void SystemIO::setup_ADC_params()
     //requires the value to be contiguous in memory
     for (i = 0; i < 7; i++) {
         if (adc_comp[i].gain == 0xFFFF) adc_comp[i].gain = 1024;
-        Logger::log("ADC:%d GAIN: %d Offset: %d", i, adc_comp[i].gain, adc_comp[i].offset);
     }
 }
 
@@ -101,7 +100,6 @@ void SystemIO::setup() {
     //the pin tables.
 
     // TODO check pins
-    Logger::log("Running on GEVCU 6.2 hardware");
     dig[0]=48;
     dig[1]=49;
     dig[2]=50;
@@ -158,7 +156,6 @@ bool SystemIO::setupSPIADC()
         SPI.beginTransaction(spi_settings);
         SPI.transfer(0);
         SPI.endTransaction();
-        Logger::log("Trying to wait ADC1 as ready");
         SPI.beginTransaction(spi_settings);
         digitalWrite(CS1, LOW); //select first ADC chip
         SPI.transfer(ADE7913_READ | ADE7913_STATUS0);
@@ -172,7 +169,6 @@ bool SystemIO::setupSPIADC()
         else
         {
             sysioState = SYSSTATE_ADC1OK;
-            Logger::log("ADC1 is ready. Trying to enable clock out");
             //Now enable the CLKOUT function on first unit so that the other two will wake up
             SPI.beginTransaction(spi_settings);
             digitalWrite(CS1, LOW);
@@ -232,7 +228,6 @@ bool SystemIO::setupSPIADC()
             digitalWrite(CS3, HIGH);
             SPI.endTransaction();
       
-            Logger::log("ADC chips 2 and 3 have been successfully started!");
             sysioState = SYSSTATE_INITIALIZED;
         }
         break;
@@ -247,12 +242,6 @@ void SystemIO::installExtendedIO(CANIODevice *device)
     bool found = false;
     int counter;
     
-    //Logger::log("Before adding extended IO counts are DI:%i DO:%i AI:%i AO:%i", numDigIn, numDigOut, numAnaIn, numAnaOut);
-    //Logger::log("Num Analog Inputs: %i", device->getAnalogInputCount());
-    //Logger::log("Num Analog Outputs: %i", device->getAnalogOutputCount());
-    //Logger::log("Num Digital Inputs: %i", device->getDigitalInputCount());
-    //Logger::log("Num Digital Outputs: %i", device->getDigitalOutputCount());
-   
     if (device->getAnalogInputCount() > 0)
     {
         for (counter = 0; counter < NUM_EXT_IO; counter++)
@@ -352,7 +341,6 @@ void SystemIO::installExtendedIO(CANIODevice *device)
         else break;
     }
     numAnaOut = numAO;
-    Logger::log("After added extended IO the counts are DI:%i DO:%i AI:%i AO:%i", numDigIn, numDigOut, numAnaIn, numAnaOut);
 }
 
 int SystemIO::numDigitalInputs()
@@ -558,7 +546,6 @@ int32_t SystemIO::getSPIADCReading(int CS, int sensor)
     
     if (!isInitialized()) return 0;
     
-    //Logger::log("SPI Read CS: %i Sensor: %i", CS, sensor);
     SPI.beginTransaction(spi_settings);
     digitalWrite(CS, LOW);
     if (sensor == 0) SPI.transfer(ADE7913_READ | ADE7913_AMP_READING);
@@ -608,7 +595,6 @@ bool SystemIO::calibrateADCOffset(int adc, bool update)
     if (adc < 4) accum >>= 11;
     else accum >>= 5;
     //if (accum > 2) accum -= 2; 
-    Logger::log("ADC %i offset is now %i", adc, accum);
     return true;
 }
 
@@ -639,7 +625,6 @@ bool SystemIO::calibrateADCGain(int adc, int32_t target, bool update)
         delay(2);
     }
     accum /= 500;
-    Logger::log("Unprocessed accum: %i", accum);
     
     //now apply the proper offset we've got set.
     if (adc < 4) {
@@ -652,21 +637,16 @@ bool SystemIO::calibrateADCGain(int adc, int32_t target, bool update)
     }
     
     if ((target / accum) > 20) {
-        Logger::log("Calibration not possible. Check your target value.");
         return false;
     }
     
     if (accum < 1000 && accum > -1000) {
-        Logger::log("Readings are too low. Try applying more voltage/current");
         return false;
     }
     
     //1024 is one to one so all gains are multiplied by that much to bring them into fixed point math.
     //we've got a reading accum and a target. The rational gain is target/accum    
     adc_comp[adc].gain = (int16_t)((16384ull * target) / accum);
-    
-    Logger::log("Accum: %i    Target: %i", accum, target);
-    Logger::log("ADC %i gain is now %i", adc, adc_comp[adc].gain);
     return true;
 
 }

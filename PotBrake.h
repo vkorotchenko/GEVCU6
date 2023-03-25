@@ -32,7 +32,6 @@
 #include "PotThrottle.h"
 #include "sys_io.h"
 #include "TickHandler.h"
-#include "Logger.h"
 #include "DeviceManager.h"
 
 #define THROTTLE_INPUT_BRAKELIGHT  2
@@ -40,7 +39,6 @@
 /*
  * The extended configuration class with additional parameters for PotBrake
  *
- * NOTE: Because of ThrottleDetector, this currently MUST be the same as PotThrottleConfiguratin !!!
  */
 class PotBrakeConfiguration: public PotThrottleConfiguration {
 public:

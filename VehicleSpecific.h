@@ -33,7 +33,6 @@
 #include "MotorController.h"
 #include "sys_io.h"
 #include "TickHandler.h"
-#include "Logger.h"
 #include "DeviceManager.h"
 
 class VehicleSpecific: public Device {

@@ -32,7 +32,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "config.h"
 #include "evTimer.h"
-#include "Logger.h"
 
 #define NUM_TIMERS 9
 

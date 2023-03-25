@@ -40,8 +40,6 @@ PotBrake::PotBrake() : Throttle() {
 void PotBrake::setup() {
     tickHandler.detach(this); // unregister from TickHandler first
 
-    Logger::log("add device: PotBrake (id: %X, %X)", POTBRAKEPEDAL, this);
-
     Throttle::setup(); //call base class
 
     //set digital ports to inputs and pull them up all inputs currently active low
@@ -75,20 +73,14 @@ bool PotBrake::validateSignal(RawSignalData *rawSignal) {
 
     if (rawSignal->input1 > (config->maximumLevel1 + CFG_THROTTLE_TOLERANCE)) {
         if (status == OK)
-            Logger::log(POTBRAKEPEDAL, (char *)Constants::valueOutOfRange, rawSignal->input1);
         status = ERR_HIGH_T1;
         return true; // even if it's too high, let it process and apply full regen !
     }
     if (rawSignal->input1 < (config->minimumLevel1 - CFG_THROTTLE_TOLERANCE)) {
         if (status == OK)
-            Logger::log(POTBRAKEPEDAL, (char *)Constants::valueOutOfRange, rawSignal->input1);
         status = ERR_LOW_T1;
         return false;
     }
-
-    // all checks passed -> brake is OK
-    if (status != OK)
-        Logger::log(POTBRAKEPEDAL, (char *)Constants::normalOperation);
     status = OK;
     return true;
 }
@@ -128,7 +120,6 @@ int16_t PotBrake::mapPedalPosition(int16_t pedalPosition) {
     range = config->maximumRegen - config->minimumRegen;
     brakeLevel = -10 * range * pedalPosition / 1000;
     brakeLevel -= 10 * config->minimumRegen;
-    //Logger::log(POTBRAKEPEDAL, "level: %d", level);
 
     return brakeLevel;
 }

@@ -33,8 +33,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Arduino.h>
 #include <SPI.h>
 #include "config.h"
-#include "Logger.h"
 #include <avr/wdt.h>
+#include "DeviceTypes.h"
 
 class CANIODevice;
 

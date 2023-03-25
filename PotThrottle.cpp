@@ -39,8 +39,6 @@ PotThrottle::PotThrottle() : Throttle() {
 void PotThrottle::setup() {
     tickHandler.detach(this); // unregister from TickHandler first
 
-    Logger::log("add device: PotThrottle (id: %X, %X)", POTACCELPEDAL, this);
-
     loadConfiguration();
 
     Throttle::setup(); //call base class
@@ -85,15 +83,11 @@ bool PotThrottle::validateSignal(RawSignalData *rawSignal) {
 
     if (calcThrottle1 > (1000 + CFG_THROTTLE_TOLERANCE))
     {
-        if (status == OK)
-            Logger::log(POTACCELPEDAL, "ERR_HIGH_T1: throttle 1 value out of range: %l", calcThrottle1);
         status = ERR_HIGH_T1;
         return false;
     }
 
     if (calcThrottle1 < (0 - CFG_THROTTLE_TOLERANCE)) {
-        if (status == OK)
-            Logger::log(POTACCELPEDAL, "ERR_LOW_T1: throttle 1 value out of range: %l ", calcThrottle1);
         status = ERR_LOW_T1;
         return false;
     }
@@ -102,15 +96,11 @@ bool PotThrottle::validateSignal(RawSignalData *rawSignal) {
         calcThrottle2 = normalizeInput(rawSignal->input2, config->minimumLevel2, config->maximumLevel2);
 
         if (calcThrottle2 > (1000 + CFG_THROTTLE_TOLERANCE)) {
-            if (status == OK)
-                Logger::log(POTACCELPEDAL, "ERR_HIGH_T2: throttle 2 value out of range: %l", calcThrottle2);
             status = ERR_HIGH_T2;
             return false;
         }
 
         if (calcThrottle2 < (0 - CFG_THROTTLE_TOLERANCE)) {
-            if (status == OK)
-                Logger::log(POTACCELPEDAL, "ERR_LOW_T2: throttle 2 value out of range: %l", calcThrottle2);
             status = ERR_LOW_T2;
             return false;
         }
@@ -118,22 +108,15 @@ bool PotThrottle::validateSignal(RawSignalData *rawSignal) {
         if (config->throttleSubType == 2) {
             // inverted throttle 2 means the sum of the two throttles should be 1000
             if ( abs(1000 - calcThrottle1 - calcThrottle2) > ThrottleMaxErrValue) {
-                if (status == OK)
-                    Logger::log(POTACCELPEDAL, "Sum of throttle 1 (%l) and throttle 2 (%l) exceeds max variance from 1000 (%l)",
-                                  calcThrottle1, calcThrottle2, ThrottleMaxErrValue);
                 status = ERR_MISMATCH;
                 return false;
             }
         } else {
             if ((calcThrottle1 - ThrottleMaxErrValue) > calcThrottle2) { //then throttle1 is too large compared to 2
-                if (status == OK)
-                    Logger::log(POTACCELPEDAL, "throttle 1 too high (%l) compared to 2 (%l)", calcThrottle1, calcThrottle2);
                 status = ERR_MISMATCH;
                 return false;
             }
             else if ((calcThrottle2 - ThrottleMaxErrValue) > calcThrottle1) { //then throttle2 is too large compared to 1
-                if (status == OK)
-                    Logger::log(POTACCELPEDAL, "throttle 2 too high (%l) compared to 1 (%l)", calcThrottle2, calcThrottle1);
                 status = ERR_MISMATCH;
                 return false;
             }
@@ -141,8 +124,6 @@ bool PotThrottle::validateSignal(RawSignalData *rawSignal) {
     }
 
     // all checks passed -> throttle is ok
-    if (status != OK)
-        if (status != ERR_MISC) Logger::log(POTACCELPEDAL, (char *)Constants::normalOperation);
     status = OK;
     return true;
 }
@@ -188,17 +169,12 @@ void PotThrottle::loadConfiguration() {
 
     Throttle::loadConfiguration(); // call parent
 
-        config->minimumLevel1 = Throttle1MinValue;
-        config->maximumLevel1 = Throttle1MaxValue;
-        config->minimumLevel2 = Throttle2MinValue;
-        config->maximumLevel2 = Throttle2MaxValue;
-        config->numberPotMeters = ThrottleNumPots;
-        config->throttleSubType = ThrottleSubtype;
-        config->AdcPin1 = ThrottleADC1;
-        config->AdcPin2 = ThrottleADC2;
-    
-    Logger::log(POTACCELPEDAL, "# of pots: %d       subtype: %d", config->numberPotMeters, config->throttleSubType);
-    Logger::log(POTACCELPEDAL, "T1 MIN: %l MAX: %l      T2 MIN: %l MAX: %l", config->minimumLevel1, config->maximumLevel1, config->minimumLevel2,
-                  config->maximumLevel2);
+    config->minimumLevel1 = Throttle1MinValue;
+    config->maximumLevel1 = Throttle1MaxValue;
+    config->minimumLevel2 = Throttle2MinValue;
+    config->maximumLevel2 = Throttle2MaxValue;
+    config->numberPotMeters = ThrottleNumPots;
+    config->throttleSubType = ThrottleSubtype;
+    config->AdcPin1 = ThrottleADC1;
+    config->AdcPin2 = ThrottleADC2;
 }
-

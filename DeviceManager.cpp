@@ -53,9 +53,7 @@ void DeviceManager::addDevice(Device *device) {
         int8_t i = findDevice(NULL);
         if (i != -1) {
             devices[i] = device;
-        } else {
-            Logger::log("unable to register device, max number of devices reached.");
-        }
+        } 
     }
 }
 
@@ -114,7 +112,6 @@ void DeviceManager::sendMessage(DeviceType devType, DeviceId devId, uint32_t msg
             {
                 if (devId == INVALID || devId == devices[i]->getId())
                 {
-                    Logger::log("Sending msg to device with ID %X", devices[i]->getId());
                     devices[i]->handleMessage(msgType, message);
                 }
             }
@@ -153,7 +150,6 @@ Throttle *DeviceManager::getAccelerator() {
     //so down range code doesn't puke
     if (!throttle)
     {
-        //Logger::log("getAccelerator() called but there is no registered accelerator!");
         return 0; //NULL!
     }
     return throttle;
@@ -165,7 +161,6 @@ Throttle *DeviceManager::getBrake() {
 
     if (!brake)
     {
-        //Logger::log("getBrake() called but there is no registered brake!");
         return 0; //NULL!
     }
     return brake;
@@ -176,7 +171,6 @@ MotorController *DeviceManager::getMotorController() {
 
     if (!motorController)
     {
-        //Logger::log("getMotorController() called but there is no registered motor controller!");
         return 0; //NULL!
     }
     return motorController;
@@ -196,7 +190,6 @@ Device *DeviceManager::getDeviceByID(DeviceId id)
             if (devices[i]->getId() == id) return devices[i];
         }
     }
-    //Logger::log("getDeviceByID - No device with ID: %X", (int)id);
     return 0; //NULL!
 }
 
@@ -213,7 +206,6 @@ Device *DeviceManager::getDeviceByType(DeviceType type)
             if (devices[i]->getType() == type) return devices[i];
         }
     }
-    //Logger::log("getDeviceByType - No devices of type: %X", (int)type);
     return 0; //NULL!
 }
 

@@ -90,14 +90,6 @@ void MotorController::setup() {
         dcVoltage = 3320;
 
     }
-    Logger::log("PRELAY=%i - Current PreCharge Relay output", config->prechargeRelay);
-    Logger::log("MRELAY=%i - Current Main Contactor Relay output", config->mainContactorRelay);
-    Logger::log("PREDELAY=%i - Precharge delay time", config->prechargeR);
-
-    //show our work
-    Logger::log("PRECHARGING...DOUT0:%d, DOUT1:%d, DOUT2:%d, DOUT3:%d,DOUT4:%d, DOUT5:%d, DOUT6:%d, DOUT7:%d", 
-                    systemIO.getDigitalOutput(0), systemIO.getDigitalOutput(1), systemIO.getDigitalOutput(2), systemIO.getDigitalOutput(3),
-                    systemIO.getDigitalOutput(4), systemIO.getDigitalOutput(5), systemIO.getDigitalOutput(6), systemIO.getDigitalOutput(7));
     coolflag = false;
       
 
@@ -141,7 +133,6 @@ void MotorController::handleTick() {
         throttleRequested = accelerator->getLevel();
     if (brake && brake->getLevel() < -10 && brake->getLevel() < accelerator->getLevel()) //if the brake has been pressed it overrides the accelerator.
         throttleRequested = brake->getLevel();
-    //Logger::log("Throttle: %d", throttleRequested);
 
     if (!donePrecharge)checkPrecharge();
 
@@ -240,10 +231,6 @@ void MotorController::checkPrecharge()
             statusBitfield1 |=1 << relay; //set bit to turn ON precharge OUTPUT annunciator
             throttleRequested = 0; //Keep throttle at zero during precharge
             prelay=true;
-            Logger::log("Starting precharge sequence - wait %i milliseconds", prechargetime);
-            Logger::log("PRECHARGE ENABLED...DOUT0:%d, DOUT1:%d, DOUT2:%d, DOUT3:%d,DOUT4:%d, DOUT5:%d, DOUT6:%d, DOUT7:%d", 
-                systemIO.getDigitalOutput(0), systemIO.getDigitalOutput(1), systemIO.getDigitalOutput(2), systemIO.getDigitalOutput(3),
-                systemIO.getDigitalOutput(4), systemIO.getDigitalOutput(5), systemIO.getDigitalOutput(6), systemIO.getDigitalOutput(7));
 
         }
     }
@@ -252,10 +239,6 @@ void MotorController::checkPrecharge()
         systemIO.setDigitalOutput(contactor, 1); //Main contactor on
         statusBitfield2 |=1 << 17; //set bit to turn on MAIN CONTACTOR annunciator
         statusBitfield1 |=1 << contactor;//setbit to Turn on main contactor output annunciator
-        Logger::log("Precharge sequence complete after %i milliseconds", prechargetime);
-        Logger::log("MAIN CONTACTOR ENABLED...DOUT0:%d, DOUT1:%d, DOUT2:%d, DOUT3:%d,DOUT4:%d, DOUT5:%d, DOUT6:%d, DOUT7:%d", 
-                    systemIO.getDigitalOutput(0), systemIO.getDigitalOutput(1), systemIO.getDigitalOutput(2), systemIO.getDigitalOutput(3),
-                    systemIO.getDigitalOutput(4), systemIO.getDigitalOutput(5), systemIO.getDigitalOutput(6), systemIO.getDigitalOutput(7));
         donePrecharge=true; //Time's up.  Let's don't do ANY of this on future ticks.
         //Generally, we leave the precharge relay on.  This doesn't hurt much in any configuration.  But when using two contactors
         //one positive with a precharge resistor and one on the negative leg to act as precharge, we need to leave precharge on.
@@ -559,7 +542,6 @@ void MotorController::loadConfiguration() {
 
     Device::loadConfiguration(); // call parent
 
-    Logger::log((char *)Constants::invalidChecksum);
     config->speedMax = MaxRPMValue;
     config->torqueMax = MaxTorqueValue;
     config->speedSlewRate = RPMSlewRateValue;
@@ -579,9 +561,6 @@ void MotorController::loadConfiguration() {
     config->reverseIn = ReverseIn;
     config->regenTaperLower = RegenTaperLower;
     config->regenTaperUpper = RegenTaperUpper;
-
-
-    Logger::log("MaxTorque: %i MaxRPM: %i", config->torqueMax, config->speedMax);
 }
 
 

@@ -2,6 +2,7 @@
 #define _CAN_COMMON_
 
 #include <Arduino.h>
+#include "config.h"
 
 /** Define the typical baudrate for CAN communication. */
 

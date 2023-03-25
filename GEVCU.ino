@@ -135,15 +135,10 @@ void setup() {
 	Serial.println(CFG_BUILD_NUM);
 	Wire.begin();
 	Wire.setClock(1000000);
-	Logger::log("TWI init ok");
 	systemIO.setup();  
 	canHandler.setup();
-	Logger::log("SYSIO init ok");	
 
 	initializeDevices();
-
-   
-	Logger::log("System Ready");	
 }
 
 void loop() {

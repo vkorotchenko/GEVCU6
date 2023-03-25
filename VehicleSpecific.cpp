@@ -55,7 +55,6 @@ VehicleSpecific::VehicleSpecific() : Device() {
 void VehicleSpecific::setup() {
     tickHandler.detach(this); // unregister from TickHandler first
 
-    Logger::log("add device: VehicleSpecific (id: %X, %X)", VEHICLESPECIFIC, this);
 
     loadConfiguration();
 
@@ -71,7 +70,6 @@ void VehicleSpecific::setup() {
  */
 void VehicleSpecific::handleTick() {
     Device::handleTick(); // Call parent which controls the workflow
-    Logger::log("VS Tick Handler");
 
     MotorController * motor = deviceManager.getMotorController();
 
@@ -100,7 +98,6 @@ void VehicleSpecific::handleTick() {
     //There are four digital inputs before us (0-3) so buttons start at digital input 4
     if (systemIO.getDigitalIn(5)) //set drive mode neutral
     {
-        Logger::log("VS Setting gear to neutral");
         systemIO.setAnalogOut(0, 0);
         systemIO.setAnalogOut(1, 1);
         systemIO.setAnalogOut(2, 0);
@@ -109,7 +106,6 @@ void VehicleSpecific::handleTick() {
     }
     if (systemIO.getDigitalIn(6)) //set drive mode to drive
     {
-        Logger::log("VS Setting gear to drive");
         systemIO.setAnalogOut(0, 0);
         systemIO.setAnalogOut(1, 0);
         systemIO.setAnalogOut(2, 1);        
@@ -118,7 +114,6 @@ void VehicleSpecific::handleTick() {
     }
     if (systemIO.getDigitalIn(4)) //set drive mode to reverse
     {
-        Logger::log("VS Setting gear to reverse");
         systemIO.setAnalogOut(0, 1);
         systemIO.setAnalogOut(1, 0);
         systemIO.setAnalogOut(2, 0);        

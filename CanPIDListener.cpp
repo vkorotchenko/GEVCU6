@@ -295,8 +295,6 @@ void CanPIDListener::loadConfiguration() {
     }
 
     Device::loadConfiguration(); // call parent
-
-    Logger::log(PIDLISTENER, (char *)Constants::invalidChecksum);
 }
 
 
