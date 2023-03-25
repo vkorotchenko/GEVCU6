@@ -193,9 +193,6 @@ public:
     void removeCallback();
     void removeCallback(uint8_t mailbox);
     void removeGeneralCallback();
-    void attachCANInterrupt( void (*cb)(CAN_FRAME *) ) {setGeneralCallback(cb);}
-	void attachCANInterrupt(uint8_t mailBox, void (*cb)(CAN_FRAME *));
-	void detachCANInterrupt(uint8_t mailBox);
     bool isFaulted();
     bool hasRXFault();
     bool hasTXFault();

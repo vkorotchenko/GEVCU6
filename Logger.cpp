@@ -26,49 +26,33 @@
 
 #include "Logger.h"
 
-Logger::LogLevel Logger::logLevel = Logger::log;
 uint32_t Logger::lastLogTime = 0;
 
 /*
- * Output a debug message with a variable amount of parameters.
+ * Output a log message with a variable amount of parameters.
  * printf() style, see Logger::log()
  *
  */
 void Logger::log(const char *message, ...) {
-    if (logLevel > Debug)
-        return;
     va_list args;
     va_start(args, message);
-    Logger::log((DeviceId) NULL, Debug, message, args);
+    Logger::log((DeviceId) NULL, message, args);
     va_end(args);
 }
 
 /*
- * Output a debug message with the name of a device appended before the message
+ * Output a log message with the name of a device appended before the message
  * printf() style, see Logger::log()
  */
 void Logger::log(DeviceId deviceId, const char *message, ...) {
-    if (logLevel > Debug)
-        return;
     va_list args;
     va_start(args, message);
-    Logger::log(deviceId, Debug, message, args);
+    Logger::log(deviceId, message, args);
     va_end(args);
 }
 
-/*
- * Output a comnsole message with a variable amount of parameters
- * printf() style, see Logger::logMessage()
- */
-void Logger::console(const char *message, ...) {
-    va_list args;
-    va_start(args, message);
-    Logger::logMessage(message, args);
-    va_end(args);
-}
 
 /*
- * Output a log message (called by debug(), info(), warn(), error(), console())
  *
  * Supports printf() like syntax:
  *
@@ -85,7 +69,7 @@ void Logger::console(const char *message, ...) {
  * %t - prints the next parameter as boolean ('T' or 'F')
  * %T - prints the next parameter as boolean ('true' or 'false')
  */
-void Logger::log(DeviceId deviceId, LogLevel level, const char *format, va_list args) {
+void Logger::log(DeviceId deviceId, const char *format, va_list args) {
     lastLogTime = millis();
     Serial.print(lastLogTime);
     Serial.print(" - ");

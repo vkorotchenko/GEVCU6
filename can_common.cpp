@@ -207,18 +207,6 @@ void CAN_COMMON::setCallback(uint8_t mailbox, void (*cb)(CAN_FRAME *))
 	cbCANFrame[mailbox] = cb;
 }
 
-
-void CAN_COMMON::attachCANInterrupt(uint8_t mailBox, void (*cb)(CAN_FRAME *)) 
-{
-	setCallback(mailBox, cb);
-}
-
-void CAN_COMMON::detachCANInterrupt(uint8_t mailBox)
-{
-	if ( mailBox >= numFilters ) return;
-	cbCANFrame[mailBox] = NULL;
-}
-
 void CAN_COMMON::removeCallback()
 {
 	for (int i = 0; i < numFilters; i++)

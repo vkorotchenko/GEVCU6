@@ -64,7 +64,6 @@ Random comments on things that should be coded up soon:
 template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg); return obj; } //Lets us stream Serial
 
 byte i = 0;
-uint8_t loglevel;
 
 
 
@@ -137,7 +136,6 @@ void setup() {
 	Wire.begin();
 	Wire.setClock(1000000);
 	Logger::log("TWI init ok");
-	loglevel = 0; //force debugging log level
 	systemIO.setup();  
 	canHandler.setup();
 	Logger::log("SYSIO init ok");	

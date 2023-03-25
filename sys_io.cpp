@@ -608,7 +608,7 @@ bool SystemIO::calibrateADCOffset(int adc, bool update)
     if (adc < 4) accum >>= 11;
     else accum >>= 5;
     //if (accum > 2) accum -= 2; 
-    Logger::console("ADC %i offset is now %i", adc, accum);
+    Logger::log("ADC %i offset is now %i", adc, accum);
     return true;
 }
 
@@ -639,7 +639,7 @@ bool SystemIO::calibrateADCGain(int adc, int32_t target, bool update)
         delay(2);
     }
     accum /= 500;
-    Logger::console("Unprocessed accum: %i", accum);
+    Logger::log("Unprocessed accum: %i", accum);
     
     //now apply the proper offset we've got set.
     if (adc < 4) {
@@ -652,12 +652,12 @@ bool SystemIO::calibrateADCGain(int adc, int32_t target, bool update)
     }
     
     if ((target / accum) > 20) {
-        Logger::console("Calibration not possible. Check your target value.");
+        Logger::log("Calibration not possible. Check your target value.");
         return false;
     }
     
     if (accum < 1000 && accum > -1000) {
-        Logger::console("Readings are too low. Try applying more voltage/current");
+        Logger::log("Readings are too low. Try applying more voltage/current");
         return false;
     }
     
@@ -665,8 +665,8 @@ bool SystemIO::calibrateADCGain(int adc, int32_t target, bool update)
     //we've got a reading accum and a target. The rational gain is target/accum    
     adc_comp[adc].gain = (int16_t)((16384ull * target) / accum);
     
-    Logger::console("Accum: %i    Target: %i", accum, target);
-    Logger::console("ADC %i gain is now %i", adc, adc_comp[adc].gain);
+    Logger::log("Accum: %i    Target: %i", accum, target);
+    Logger::log("ADC %i gain is now %i", adc, adc_comp[adc].gain);
     return true;
 
 }

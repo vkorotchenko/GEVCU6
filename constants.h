@@ -64,7 +64,6 @@ static const char* reverseIn = "reverseIn";
 
 static const char* speedMax = "speedMax";
 static const char* torqueMax = "torqueMax";
-static const char* logLevel = "logLevel";
 
 // status
 static const char* timeRunning = "timeRunning";

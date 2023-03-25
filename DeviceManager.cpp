@@ -57,19 +57,6 @@ void DeviceManager::addDevice(Device *device) {
             Logger::log("unable to register device, max number of devices reached.");
         }
     }
-    /*
-    switch (device->getType()) {
-    case DEVICE_THROTTLE:
-    	throttle = (Throttle *) device;
-    	break;
-    case DEVICE_BRAKE:
-    	brake = (Throttle *) device;
-    	break;
-    case DEVICE_MOTORCTRL:
-    	motorController = (MotorController *) device;
-    	break;
-    }
-    */
 }
 
 /*

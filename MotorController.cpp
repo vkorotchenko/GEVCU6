@@ -90,12 +90,12 @@ void MotorController::setup() {
         dcVoltage = 3320;
 
     }
-    Logger::console("PRELAY=%i - Current PreCharge Relay output", config->prechargeRelay);
-    Logger::console("MRELAY=%i - Current Main Contactor Relay output", config->mainContactorRelay);
-    Logger::console("PREDELAY=%i - Precharge delay time", config->prechargeR);
+    Logger::log("PRELAY=%i - Current PreCharge Relay output", config->prechargeRelay);
+    Logger::log("MRELAY=%i - Current Main Contactor Relay output", config->mainContactorRelay);
+    Logger::log("PREDELAY=%i - Precharge delay time", config->prechargeR);
 
     //show our work
-    Logger::console("PRECHARGING...DOUT0:%d, DOUT1:%d, DOUT2:%d, DOUT3:%d,DOUT4:%d, DOUT5:%d, DOUT6:%d, DOUT7:%d", 
+    Logger::log("PRECHARGING...DOUT0:%d, DOUT1:%d, DOUT2:%d, DOUT3:%d,DOUT4:%d, DOUT5:%d, DOUT6:%d, DOUT7:%d", 
                     systemIO.getDigitalOutput(0), systemIO.getDigitalOutput(1), systemIO.getDigitalOutput(2), systemIO.getDigitalOutput(3),
                     systemIO.getDigitalOutput(4), systemIO.getDigitalOutput(5), systemIO.getDigitalOutput(6), systemIO.getDigitalOutput(7));
     coolflag = false;
