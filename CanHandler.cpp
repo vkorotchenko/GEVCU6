@@ -57,6 +57,7 @@ void CanHandler::setup()
         SERIAL_PORT_MONITOR.println("CAN init fail, retry...");
         delay(100);
     }
+    SERIAL_PORT_MONITOR.println("CAN starter.");
 }
 
 uint32_t CanHandler::getBusSpeed()
