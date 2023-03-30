@@ -53,19 +53,10 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * try to use the same numbers for several devices because then they will share
  * the same timer (out of a limited number of 9 timers).
  */
-#define CFG_TICK_INTERVAL_HEARTBEAT                 2000000
 #define CFG_TICK_INTERVAL_POT_THROTTLE              40000
 #define CFG_TICK_INTERVAL_MOTOR_CONTROLLER          40000
 #define CFG_TICK_INTERVAL_MOTOR_CONTROLLER_DMOC     40000
-#define CFG_TICK_INTERVAL_MEM_CACHE                 40000
-#define CFG_TICK_INTERVAL_EVIC                      100000
 #define CFG_TICK_INTERVAL_VEHICLE                   100000
-
-/*
- * CAN BUS CONFIGURATION
- */
-#define CFG_CAN0_SPEED                              500 // specify the speed of the CAN0 bus (EV) in thousands. 
-#define CFG_CAN1_SPEED                              500 // specify the speed of the CAN1 bus (Car) in thousands
 
 /*
  * MISCELLANEOUS
