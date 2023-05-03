@@ -279,6 +279,8 @@ bool SystemIO::setupSPIADC()
         return true;
         break;
     }
+
+    return false;
 }
 
 void SystemIO::installExtendedIO(CANIODevice *device)
@@ -492,6 +494,8 @@ boolean SystemIO::setAnalogOut(uint8_t which, int32_t level)
     CANIODevice *dev;
     dev = extendedAnalogOut[which].device;
     if (dev) dev->setAnalogOutput(extendedAnalogOut[which].localOffset, level);    
+
+    return false;
 }
 
 int32_t SystemIO::getAnalogOut(uint8_t which)
@@ -499,7 +503,9 @@ int32_t SystemIO::getAnalogOut(uint8_t which)
     if (which >= numAnaOut) return 0;
     CANIODevice *dev;
     dev = extendedAnalogOut[which].device;
-    if (dev) return dev->getAnalogOutput(extendedAnalogOut[which].localOffset);    
+    if (dev) return dev->getAnalogOutput(extendedAnalogOut[which].localOffset);  
+    
+    return 0;  
 }
 
 
@@ -552,6 +558,7 @@ boolean SystemIO::getDigitalIn(uint8_t which) {
         dev = extendedDigitalIn[which - NUM_DIGITAL].device;
         if (dev) return dev->getDigitalInput(extendedDigitalIn[which - NUM_DIGITAL].localOffset);
     }
+    return false;
 }
 
 //set output high or not
@@ -588,6 +595,7 @@ boolean SystemIO::getDigitalOutput(uint8_t which) {
         dev = extendedDigitalOut[which - NUM_OUTPUT].device;
         if (dev) return dev->getDigitalOutput(extendedDigitalOut[which - NUM_OUTPUT].localOffset);
     }
+    return false;
 }
 
 int32_t SystemIO::getSPIADCReading(int CS, int sensor)
@@ -640,7 +648,7 @@ bool SystemIO::calibrateADCOffset(int adc, bool update)
 
         //normally one shouldn't call watchdog reset in multiple
         //places but this is a special case.
-        wdt_reset();
+        Watchdog.reset();
         delay(2);
     }
     accum /= 500;
@@ -675,7 +683,7 @@ bool SystemIO::calibrateADCGain(int adc, int32_t target, bool update)
 
         //normally one shouldn't call watchdog reset in multiple
         //places but this is a special case.
-        wdt_reset();
+        Watchdog.reset();
         delay(2);
     }
     accum /= 500;

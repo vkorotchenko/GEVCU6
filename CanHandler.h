@@ -29,11 +29,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Arduino.h>
 #include "evTimer.h"
 #include "Logger.h"
-#include <can_common.h>
 
 #include "mcp2515_can.h"
-
-#define SPI_CS_PIN 9
 
 enum SDO_COMMAND
 {
@@ -60,6 +57,21 @@ enum ISOTP_MODE
     FLOW = 3
 };
 
+class CAN_FRAME
+{
+public:
+    CAN_FRAME();
+
+    byte data[8];    // 64 bits - lots of ways to access it.
+    uint32_t id;        // 29 bit if ide set, 11 bit otherwise
+    uint32_t fid;       // family ID - used internally to library
+    uint32_t timestamp; // CAN timer value when mailbox message was received.
+    uint8_t rtr;        // Remote Transmission Request (1 = RTR, 0 = data frame)
+    uint8_t priority;   // Priority but only important for TX frames and then only for special uses (0-31)
+    uint8_t extended;   // Extended ID flag
+    uint8_t length;     // Number of data bytes
+    
+};
 class CanObserver
 {
 public:
@@ -91,18 +103,6 @@ public:
     void prepareOutputFrame(CAN_FRAME *frame, uint32_t id);
     void CANIO(CAN_FRAME& frame);
     void sendFrame(CAN_FRAME& frame);
-    void sendISOTP(int id, int length, uint8_t *data);
-
-    //canopen support functions
-    void sendNodeStart(int id = 0);
-    void sendNodePreop(int id = 0);
-    void sendNodeReset(int id = 0);
-    void sendNodeStop(int id = 0);
-    void sendPDOMessage(int, int, unsigned char *);
-    void sendSDORequest(SDO_FRAME *frame);
-    void sendSDOResponse(SDO_FRAME *frame);
-    void sendHeartbeat();
-    void setMasterID(int id);   
 
 protected:
 
@@ -124,6 +124,7 @@ private:
     void sendNMTMsg(int, int);
     int masterID; //what is our ID as the master node?      
 };
+
 
 extern CanHandler canHandler;
 

@@ -57,7 +57,7 @@ Random comments on things that should be coded up soon:
 #include <Wire.h>
 #include "evTimer.h"
 #include <SPI.h>
-#include <avr/wdt.h>
+#include <Adafruit_SleepyDog.h>
 
 #define DEBUG_STARTUP_DELAY         //if this is defined there is a large start up delay so you can see the start up messages. NOT for production!
 
@@ -67,7 +67,7 @@ MemCache *memCache;
 Heartbeat *heartbeat;
 SerialConsole *serialConsole;
 ADAFRUITBLE *btDevice;
-template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg); return obj; } //Lets us stream SerialUSB
+template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg); return obj; } //Lets us stream Serial
 
 byte i = 0;
 
@@ -179,21 +179,21 @@ void setup() {
     //               Thresh  Enable   Force Reset
     SUPC->SUPC_SMMR = 0xA | (1<<8) | (1<<12);
 	#endif
-	wdt_enable(WDTO_2S);
+	Watchdog.enable(250);
 	
 #ifdef DEBUG_STARTUP_DELAY
     for (int c = 0; c < 200; c++) {
         delay(25);  //This delay lets you see startup.  But it breaks DMOC645 really badly.  You have to have comm quickly upon start up
-        wdt_reset();
+    Watchdog.reset();
     }
 #endif
        
 	pinMode(BLINK_LED, OUTPUT);
 	digitalWrite(BLINK_LED, LOW);
-    SerialUSB.begin(CFG_SERIAL_SPEED);
-	SerialUSB.println(CFG_VERSION);
-	SerialUSB.print("Build number: ");
-	SerialUSB.println(CFG_BUILD_NUM);
+    Serial.begin(CFG_SERIAL_SPEED);
+	Serial.println(CFG_VERSION);
+	Serial.print("Build number: ");
+	Serial.println(CFG_BUILD_NUM);
 	Wire.begin();
 	Wire.setClock(1000000);
 	Logger::info("TWI init ok");
@@ -252,5 +252,5 @@ void loop() {
 	Timer7.loop();
 	Timer8.loop();
     
-    wdt_reset();
+    Watchdog.reset();
 }

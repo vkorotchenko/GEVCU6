@@ -36,7 +36,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "eeprom_layout.h"
 #include "PrefHandler.h"
 #include "Logger.h"
-#include <avr/wdt.h>
+#include <Adafruit_SleepyDog.h>
+
 
 class CANIODevice;
 

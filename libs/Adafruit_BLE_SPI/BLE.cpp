@@ -294,6 +294,7 @@ bool Adafruit_BLE::readNVM(uint16_t offset, uint8_t data[], uint16_t size)
 
   // switch back if necessary
   if ( current_mode == BLUEFRUIT_MODE_DATA ) setMode(BLUEFRUIT_MODE_DATA);
+  return false;
 }
 
 /******************************************************************************/

@@ -48,9 +48,9 @@ bool Heartbeat::getThrottleDebug() {
 void Heartbeat::handleTick() {
     // Print a dot if no other output has been made since the last tick
     if (Logger::getLastLogTime() < lastTickTime) {
-        SerialUSB.print('.');
+        Serial.print('.');
         if ((++dotCount % 80) == 0) {
-            SerialUSB.println();
+            Serial.println();
         }
     }
     lastTickTime = millis();
