@@ -672,13 +672,8 @@ void ADAFRUITBLE::handleTick() {
                 bleModes.doUpdate = 1;
             }
             
-            if ( bleModes.can0Speed != (uint16_t)(canHandlerEv.getBusSpeed() / 1000) ) {
-                bleModes.can0Speed = (uint16_t)(canHandlerEv.getBusSpeed() / 1000);
-                bleModes.doUpdate = 1;
-            }
-
-            if ( bleModes.can1Speed != (uint16_t)(canHandlerCar.getBusSpeed() / 1000) ) {
-                bleModes.can1Speed = (uint16_t)(canHandlerCar.getBusSpeed() / 1000);
+            if ( bleModes.can0Speed != (uint16_t)(canHandler.getBusSpeed() / 1000) ) {
+                bleModes.can0Speed = (uint16_t)(canHandler.getBusSpeed() / 1000);
                 bleModes.doUpdate = 1;
             }            
         }
@@ -1228,20 +1223,10 @@ void ADAFRUITBLE::gattRX(int32_t chars_id, uint8_t data[], uint16_t len)
         uint16 = data[6] + data[7] * 256ul;
         if (bleModes.can0Speed != uint16)
         {
-            Logger::info("Updating CAN0 speed to %i from %i", uint16, canHandlerEv.getBusSpeed()/1000);
+            Logger::info("Updating CAN0 speed to %i from %i", uint16, canHandler.getBusSpeed()/1000);
             bleModes.can0Speed = uint16;
             sysPrefs->write(EESYS_CAN0_BAUD, uint16);
-            canHandlerEv.setup();
-            sysPrefs->calcChecksum();
-        }
-        
-        uint16 = data[8] + data[9] * 256ul;
-        if (bleModes.can1Speed != uint16)
-        {
-            Logger::info("Updating CAN1 speed to %i from %i", uint16, canHandlerCar.getBusSpeed()/1000);
-            bleModes.can1Speed = uint16;
-            sysPrefs->write(EESYS_CAN1_BAUD, uint16);
-            canHandlerCar.setup();
+            canHandler.setup();
             sysPrefs->calcChecksum();
         }
         

@@ -33,8 +33,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-#include <due_can.h>
-
 #define CFG_BUILD_NUM	1061      //increment this every time a git commit is done. 
 #define CFG_VERSION "GEVCU 2021-03-12"
 
@@ -42,7 +40,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * SERIAL CONFIGURATION
  */
 #define CFG_SERIAL_SPEED 115200
-//#define SerialUSB Serial // re-route serial-usb output to programming port ;) comment if output should go to std usb
+//#define Serial Serial // re-route serial-usb output to programming port ;) comment if output should go to std usb
 
 
 //The defines that used to be here to configure devices are gone now.

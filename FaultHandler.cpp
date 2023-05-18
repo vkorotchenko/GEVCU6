@@ -205,16 +205,7 @@ bool FaultHandler::getFault(uint16_t fault, FAULT *outFault)
     return false;
 }
 
-uint16_t FaultHandler::setFaultACK(uint16_t fault)
-{
-    if (fault > 0 && fault < CFG_FAULT_HISTORY_SIZE)
-    {
-        faultList[fault].ack = 1;
-        writeFaultToEEPROM(fault);
-    }
-}
-
-uint16_t FaultHandler::setFaultOngoing(uint16_t fault, bool ongoing)
+void FaultHandler::setFaultOngoing(uint16_t fault, bool ongoing)
 {
     if (fault > 0 && fault < CFG_FAULT_HISTORY_SIZE)
     {

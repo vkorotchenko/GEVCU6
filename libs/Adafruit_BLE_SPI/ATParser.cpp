@@ -70,6 +70,7 @@ boolean Adafruit_ATParser::attachObj(BLEListener *listener)
     this->listener = listener;
     attachInterrupt(digitalPinToInterrupt(m_irq_pin), gotBLEReply, RISING);
     flush();
+    return false;
 }
 
 void Adafruit_ATParser::detachObj()

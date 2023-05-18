@@ -27,12 +27,10 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define CAN_HANDLER_H_
 
 #include <Arduino.h>
-#include "config.h"
-#include "due_can.h"
-#include <due_wire.h>
-#include "variant.h"
-#include <DueTimer.h>
+#include "evTimer.h"
 #include "Logger.h"
+
+#include "mcp2515_can.h"
 
 enum SDO_COMMAND
 {
@@ -59,6 +57,21 @@ enum ISOTP_MODE
     FLOW = 3
 };
 
+class CAN_FRAME
+{
+public:
+    CAN_FRAME();
+
+    byte data[8];    // 64 bits - lots of ways to access it.
+    uint32_t id;        // 29 bit if ide set, 11 bit otherwise
+    uint32_t fid;       // family ID - used internally to library
+    uint32_t timestamp; // CAN timer value when mailbox message was received.
+    uint8_t rtr;        // Remote Transmission Request (1 = RTR, 0 = data frame)
+    uint8_t priority;   // Priority but only important for TX frames and then only for special uses (0-31)
+    uint8_t extended;   // Extended ID flag
+    uint8_t length;     // Number of data bytes
+    
+};
 class CanObserver
 {
 public:
@@ -73,19 +86,15 @@ public:
     int getNodeID();
 
 private:
-    bool canOpenMode;
+    bool canOpenMode; //TODO remove
     int nodeID;
 };
 
 class CanHandler
 {
 public:
-    enum CanBusNode {
-        CAN_BUS_EV, // CAN0 is intended to be connected to the EV bus (controller, charger, etc.)
-        CAN_BUS_CAR // CAN1 is intended to be connected to the car's high speed bus (the one with the ECU)
-    };
 
-    CanHandler(CanBusNode busNumber);
+    CanHandler( );
     void setup();
     uint32_t getBusSpeed();
     void attach(CanObserver *observer, uint32_t id, uint32_t mask, bool extended);
@@ -94,18 +103,6 @@ public:
     void prepareOutputFrame(CAN_FRAME *frame, uint32_t id);
     void CANIO(CAN_FRAME& frame);
     void sendFrame(CAN_FRAME& frame);
-    void sendISOTP(int id, int length, uint8_t *data);
-
-    //canopen support functions
-    void sendNodeStart(int id = 0);
-    void sendNodePreop(int id = 0);
-    void sendNodeReset(int id = 0);
-    void sendNodeStop(int id = 0);
-    void sendPDOMessage(int, int, unsigned char *);
-    void sendSDORequest(SDO_FRAME *frame);
-    void sendSDOResponse(SDO_FRAME *frame);
-    void sendHeartbeat();
-    void setMasterID(int id);   
 
 protected:
 
@@ -114,25 +111,21 @@ private:
         uint32_t id;    // what id to listen to
         uint32_t mask;  // the CAN frame mask to listen to
         bool extended;  // are extended frames expected
-        uint8_t mailbox;    // which mailbox is this observer assigned to
         CanObserver *observer;  // the observer object (e.g. a device)
     };
 
-    CanBusNode canBusNode;  // indicator to which can bus this instance is assigned to
-    CANRaw *bus;    // the can bus instance which this CanHandler instance is assigned to
     CanObserverData observerData[CFG_CAN_NUM_OBSERVERS];    // Can observers
     uint32_t busSpeed;
 
     void logFrame(CAN_FRAME& frame);
     int8_t findFreeObserverData();
-    int8_t findFreeMailbox();
 
     //canopen support functions
     void sendNMTMsg(int, int);
     int masterID; //what is our ID as the master node?      
 };
 
-extern CanHandler canHandlerEv;
-extern CanHandler canHandlerCar;
+
+extern CanHandler canHandler;
 
 #endif /* CAN_HANDLER_H_ */
