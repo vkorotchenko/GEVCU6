@@ -166,7 +166,7 @@ void CanHandler::process()
 
     if (CAN_MSGAVAIL == CAN.checkReceive())
     {
-        Logger::info("RECEIVED");
+        Logger::debug("RECEIVED");
         CAN.readMsgBuf(&len, buf); // read data,  len: data length, buf: data buf
 
         frame.length = (uint8_t)len;
@@ -188,19 +188,24 @@ void CanHandler::process()
 
         for (int i = 0; i < CFG_CAN_NUM_OBSERVERS; i++)
         {
+            Logger::info("i: %d", i);
             observer = observerData[i].observer;
             if (observer != NULL)
             {
+            Logger::info("observer not null : %d", i);
                 // Apply mask to frame.id and observer.id. If they match, forward the frame to the observer
                 if (observer->isCANOpen())
                 {
+                Logger::info("observer can open: %d", i);
                     if (frame.id > 0x17F && frame.id < 0x580)
                     {
+            Logger::info("handel ODOFrame i: %d", i);
                         observer->handlePDOFrame(&frame);
                     }
 
                     if (frame.id == 0x600 + observer->getNodeID()) // SDO request targetted to our ID
                     {
+            Logger::info("handle SDORequest i: %d", i);
                         sFrame.nodeID = observer->getNodeID();
                         sFrame.index = frame.data.byte[1] + (frame.data.byte[2] * 256);
                         sFrame.subIndex = frame.data.byte[3];
@@ -220,6 +225,7 @@ void CanHandler::process()
 
                     if (frame.id == 0x580 + observer->getNodeID()) // SDO reply to our ID
                     {
+            Logger::info("handle SDOResponse i: %d", i);
                         sFrame.nodeID = observer->getNodeID();
                         sFrame.index = frame.data.byte[1] + (frame.data.byte[2] * 256);
                         sFrame.subIndex = frame.data.byte[3];
@@ -240,8 +246,10 @@ void CanHandler::process()
                 }
                 else // raw canbus
                 {
+            Logger::info("raw canbus i: %d", i);
                     if ((frame.id & observerData[i].mask) == (observerData[i].id & observerData[i].mask))
                     {
+            Logger::info("handle frame i: %d", i);
                         observer->handleCanFrame(&frame);
                     }
                 }

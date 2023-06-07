@@ -37,8 +37,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Adafruit_SleepyDog.h>
 
 
-class CANIODevice;
-
 #define CS1	26
 #define CS2	28
 #define CS3	30
@@ -85,7 +83,6 @@ enum SYSIO_STATE {
 class ExtendedIODev
 {
 public:
-    CANIODevice *device;
     uint8_t localOffset;
 };
 
@@ -109,9 +106,7 @@ public:
     int32_t getCurrentReading();
     int32_t getPackHighReading();
     int32_t getPackLowReading();
-    
-    void installExtendedIO(CANIODevice *device);
-    
+        
     int numDigitalInputs();
     int numDigitalOutputs();
     int numAnalogInputs();
@@ -141,11 +136,6 @@ private:
     int numDigOut;
     int numAnaIn;
     int numAnaOut;
-    
-    ExtendedIODev extendedDigitalOut[NUM_EXT_IO];
-    ExtendedIODev extendedDigitalIn[NUM_EXT_IO];
-    ExtendedIODev extendedAnalogOut[NUM_EXT_IO];
-    ExtendedIODev extendedAnalogIn[NUM_EXT_IO];    
 };
 
 extern SystemIO systemIO;

@@ -151,7 +151,7 @@ void MotorController::handleTick() {
 
 
         //Some test simulations if precharge time is set to 12345
-        if(config->prechargeR==12345)
+        if(true)
         {
             dcVoltage--;
             if (torqueActual < -500)
@@ -339,7 +339,7 @@ void MotorController::checkReverseLight()
 void MotorController:: checkEnableInput()
 {
     uint16_t enableinput=getEnableIn();
-    if(enableinput >= 0 && enableinput<4) //Do we even have an enable input configured ie NOT 255.
+    if(enableinput >= 0 && enableinput<MAX_PIN) //Do we even have an enable input configured ie NOT 255.
     {
         if((systemIO.getDigitalIn(enableinput))||testenableinput) //If it's ON let's set our opstate to ENABLE
         {
@@ -360,7 +360,7 @@ void MotorController:: checkEnableInput()
 void MotorController:: checkReverseInput()
 {
     uint16_t reverseinput=getReverseIn();
-    if(reverseinput >= 0 && reverseinput<4)  //If we don't have a Reverse Input, do nothing
+    if(reverseinput >= 0 && reverseinput<MAX_PIN)  //If we don't have a Reverse Input, do nothing
     {
         if((systemIO.getDigitalIn(reverseinput))||testreverseinput)
         {

@@ -31,7 +31,6 @@ by stimmer
 */
 
 #include "sys_io.h"
-#include "CANIODevice.h"
 
 #undef HID_ENABLED
 
@@ -41,20 +40,11 @@ SystemIO::SystemIO()
 {
     useSPIADC = true;
     
-    for (int i = 0; i < NUM_EXT_IO; i++)
-    {
-        extendedDigitalOut[i].device = NULL;
-        extendedDigitalIn[i].device = NULL;
-        extendedAnalogOut[i].device = NULL;
-        extendedAnalogIn[i].device = NULL;
-    }
-    
     numDigIn = NUM_DIGITAL;
     numDigOut = NUM_OUTPUT;
     numAnaIn = NUM_ANALOG;
     numAnaOut = 0;
     
-    sysioState = SYSSTATE_UNINIT;
     adc2Initialized = false;
     adc3Initialized = false;
     lastInitAttempt = 0;
@@ -62,8 +52,7 @@ SystemIO::SystemIO()
 
 bool SystemIO::isInitialized()
 {
-    if (sysioState == SYSSTATE_INITIALIZED) return true;
-    return false;
+    return true;
 }
 
 void SystemIO::pollInitialization()
@@ -136,120 +125,7 @@ void SystemIO::setup() {
 
     // adjust ADC
     // analogReference(AR_INTERNAL_3_0);
-    analogReadResolution(12);
-}
-
-void SystemIO::installExtendedIO(CANIODevice *device)
-{
-    bool found = false;
-    int counter;
-    
-    //Logger::debug("Before adding extended IO counts are DI:%i DO:%i AI:%i AO:%i", numDigIn, numDigOut, numAnaIn, numAnaOut);
-    //Logger::debug("Num Analog Inputs: %i", device->getAnalogInputCount());
-    //Logger::debug("Num Analog Outputs: %i", device->getAnalogOutputCount());
-    //Logger::debug("Num Digital Inputs: %i", device->getDigitalInputCount());
-    //Logger::debug("Num Digital Outputs: %i", device->getDigitalOutputCount());
-   
-    if (device->getAnalogInputCount() > 0)
-    {
-        for (counter = 0; counter < NUM_EXT_IO; counter++)
-        {
-            if (extendedAnalogIn[counter].device == NULL)
-            {
-                for (int i = 0; i < device->getAnalogInputCount(); i++)
-                {
-                    if ((counter + i) == NUM_EXT_IO) break;
-                    extendedAnalogIn[counter + i].device = device;
-                    extendedAnalogIn[counter + i].localOffset = i;
-                }
-                break;
-            }
-        }
-    }
-    
-    if (device->getAnalogOutputCount() > 0)
-    {
-        for (counter = 0; counter < NUM_EXT_IO; counter++)
-        {
-            if (extendedAnalogOut[counter].device == NULL)
-            {
-                for (int i = 0; i < device->getAnalogOutputCount(); i++)
-                {
-                    if ((counter + i) == NUM_EXT_IO) break;
-                    extendedAnalogOut[counter + i].device = device;
-                    extendedAnalogOut[counter + i].localOffset = i;
-                }
-                break;
-            }
-        }
-    }
-
-    if (device->getDigitalOutputCount() > 0)
-    {
-        for (counter = 0; counter < NUM_EXT_IO; counter++)
-        {
-            if (extendedDigitalOut[counter].device == NULL)
-            {
-                for (int i = 0; i < device->getDigitalOutputCount(); i++)
-                {
-                    if ((counter + i) == NUM_EXT_IO) break;
-                    extendedDigitalOut[counter + i].device = device;
-                    extendedDigitalOut[counter + i].localOffset = i;
-                }
-                break;
-            }
-        }
-    }
-
-    if (device->getDigitalInputCount() > 0)
-    {
-        for (counter = 0; counter < NUM_EXT_IO; counter++)
-        {
-            if (extendedDigitalIn[counter].device == NULL)
-            {
-                for (int i = 0; i < device->getDigitalInputCount(); i++)
-                {
-                    if ((counter + i) == NUM_EXT_IO) break;
-                    extendedDigitalIn[counter + i].device = device;
-                    extendedDigitalIn[counter + i].localOffset = i;
-                }
-                break;
-            }
-        }
-    }
-    
-    int numDI = NUM_DIGITAL; 
-    for (int i = 0; i < NUM_EXT_IO; i++)
-    {
-        if (extendedDigitalIn[i].device != NULL) numDI++;
-        else break;
-    }
-    numDigIn = numDI;
-    
-    int numDO = NUM_OUTPUT;
-    for (int i = 0; i < NUM_EXT_IO; i++)
-    {
-        if (extendedDigitalOut[i].device != NULL) numDO++;
-        else break;
-    }
-    numDigOut = numDO;
-
-    int numAI = NUM_ANALOG; 
-    for (int i = 0; i < NUM_EXT_IO; i++)
-    {
-        if (extendedAnalogIn[i].device != NULL) numAI++;
-        else break;
-    }
-    numAnaIn = numAI;
-
-    int numAO = 0; //GEVCU has no real analog outputs - there are PWM but they're on the digital outputs
-    for (int i = 0; i < NUM_EXT_IO; i++)
-    {
-        if (extendedDigitalIn[i].device != NULL) numAO++;
-        else break;
-    }
-    numAnaOut = numAO;
-    Logger::debug("After added extended IO the counts are DI:%i DO:%i AI:%i AO:%i", numDigIn, numDigOut, numAnaIn, numAnaOut);
+    analogReadResolution(10);
 }
 
 int SystemIO::numDigitalInputs()
@@ -279,60 +155,26 @@ Gets reading over SPI which is still pretty fast. The SPI connected chip is 24 b
 but too much of the code for GEVCU uses 16 bit integers for storage so the 24 bit values returned
 are knocked down to 16 bit values before being passed along.
 */
-int16_t SystemIO::getAnalogIn(uint8_t which) {
+int16_t SystemIO::getAnalogIn(uint8_t pin) {
     int base;
-    if (which > numAnaIn) {
+    if (pin > MAX_PIN) {
         return 0;
     }
     
     if (!isInitialized()) return 0;
     
-    if (which < NUM_ANALOG) {
-        //if (getSystemType() == GEVCU6)
-        //{
-            int32_t valu;
-            //first 4 analog readings must match old methods
-
-            if (which < 2)
-            {
-                valu = getSPIADCReading(CS1, (which & 1) + 1);
-            }
-            else if (which < 4) valu = getSPIADCReading(CS2, (which & 1) + 1);
-            //the next three are new though. 4 = current sensor, 5 = pack high (ref to mid), 6 = pack low (ref to mid)
-            else if (which == 4) valu = getSPIADCReading(CS1, 0);
-            else if (which == 5) valu = getSPIADCReading(CS3, 1);
-            else if (which == 6) valu = getSPIADCReading(CS3, 2);
-            valu = valu / 2048;
-            valu -= adc_comp[which].offset;
-            valu = (valu * adc_comp[which].gain) / 1024;
-            return valu;
-        //}
-    }
-    else //the return makes this superfluous...
-    {        
-        //handle an extended I/O call
-        CANIODevice *dev = extendedAnalogIn[which - NUM_ANALOG].device;
-        if (dev) return dev->getAnalogInput(extendedAnalogIn[which - NUM_ANALOG].localOffset);
-        return 0;
-    }
-    return 0; //if it falls through and nothing could provide the answer then return 0
+    return analogRead(pin);
 }
 
 boolean SystemIO::setAnalogOut(uint8_t which, int32_t level)
 {
-    if (which >= numAnaOut) return false;
-    CANIODevice *dev;
-    dev = extendedAnalogOut[which].device;
-    if (dev) dev->setAnalogOutput(extendedAnalogOut[which].localOffset, level);    
+    if (which >= numAnaOut) return false; 
     return false;
 }
 
 int32_t SystemIO::getAnalogOut(uint8_t which)
 {
-    if (which >= numAnaOut) return 0;
-    CANIODevice *dev;
-    dev = extendedAnalogOut[which].device;
-    if (dev) return dev->getAnalogOutput(extendedAnalogOut[which].localOffset);    
+    if (which >= numAnaOut) return 0;  
     return false;
 }
 
@@ -378,31 +220,19 @@ int32_t SystemIO::getPackLowReading()
 //get value of one of the 4 digital inputs
 boolean SystemIO::getDigitalIn(uint8_t pin) {
     
-    if (pin < MAX_PORT) return !(digitalRead(pin));
-    else
-    {
-        CANIODevice *dev;
-        dev = extendedDigitalIn[pin - NUM_DIGITAL].device;
-        if (dev) return dev->getDigitalInput(extendedDigitalIn[pin - NUM_DIGITAL].localOffset);
-    }
+    if (pin < MAX_PIN) return !(digitalRead(pin));
     return false;
 }
 
 //set output high or not
 void SystemIO::setDigitalOutput(uint8_t pin, boolean active) {
-    Logger::info("SET DIGITAL:  pin %d  numDigOut %d MAX_PORT %d active %s", pin, numDigOut, MAX_PORT, active);
+    Logger::info("SET DIGITAL:  pin %d  numDigOut %d MAX_PIN %d active %s", pin, numDigOut, MAX_PIN, active);
     
-    if (pin < MAX_PORT)
+    if (pin < MAX_PIN)
     {
         if (active)
             digitalWrite(pin, LOW);
         else digitalWrite(pin, HIGH);
-    }
-    else
-    {
-        CANIODevice *dev;
-        dev = extendedDigitalOut[pin - NUM_OUTPUT].device;
-        if (dev) return dev->setDigitalOutput(extendedDigitalOut[pin - NUM_OUTPUT].localOffset, active);
     }
 }
 
@@ -413,12 +243,6 @@ boolean SystemIO::getDigitalOutput(uint8_t pin) {
     {
         if (pin == 255) return false;
         return digitalRead(pin);
-    }
-    else
-    {
-        CANIODevice *dev;
-        dev = extendedDigitalOut[pin - NUM_OUTPUT].device;
-        if (dev) return dev->getDigitalOutput(extendedDigitalOut[pin - NUM_OUTPUT].localOffset);
     }
     return false;
 }
