@@ -55,6 +55,7 @@ Random comments on things that should be coded up soon:
 // identify the required libraries for the build.
 #include <Wire.h>
 #include "evTimer.h"
+#include "ble.h"
 #include <SPI.h>
 #include <Adafruit_SleepyDog.h>
 
@@ -66,6 +67,7 @@ template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg);
 
 byte i = 0;
 uint8_t loglevel;
+Ble *bt;
 
 
 
@@ -133,6 +135,9 @@ void setup() {
 	Logger::info("SYSIO init ok");	
 
 	initializeDevices();
+
+	bt = new Ble();
+	bt->setup();
 
    
 	Logger::info("System Ready");	
