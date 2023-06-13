@@ -31,7 +31,7 @@ void Ble::setup() {
   /* Change the device name to make it easier to find */
   Logger::log("Setting device name to %s': ", DISPLAY_NAME);
 
-  if (! ble.sendCommandCheckOK(F("AT+GAPDEVNAME=Pao Charger")) ) {
+  if (! ble.sendCommandCheckOK(F("AT+GAPDEVNAME=Pao EVCU")) ) {
     Logger::log("Could not set device name?");
   }
 
@@ -43,26 +43,44 @@ void Ble::setup() {
     Logger::log("Could not add service");
   }
 
-  success = ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
-  if (! success) {
-    Logger::log("Could not add char1");
-  }
-  success = ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1A, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tAmpId);
-  if (! success) {
-    Logger::log("Could not add char2");
-  }
-  success = ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2BED, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &cVoltId);
-  if (! success) {
-    Logger::log("Could not add char3");
-  }
-  success = ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2BF0, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &cAmpId);
-  if (! success) {
-    Logger::log("Could not add char4");
-  }
-  success = ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2BEE, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=10, VALUE=0"), &rTime);
-  if (! success) {
-    Logger::log("Could not add char5");
-  }
+  // DMOC REQUESTED
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  // 0x232
+  // speed 
+
+  // state
+
+  //0x233
+  // torque
+
+  //0x234
+  // accelerate
+  
+  //regen
+
+  // 0x236
+  // shifter position
+
+  // DMOC RECEIVED
+  // temprature status 0x651
+  // motor temp
+
+  // inv temp
+
+
+  //torque report 0x23A
+  // actual torque
+
+  // speed and current 0x23B
+  // speed
+
+  // state
+
+  // HV bus state 0x650
+  // dc voltage
+
+  // dc current
+ 
 
 
   ble.sendCommandCheckOK( F("AT+GAPSETADVDATA=02-01-06-05-02-0d-18-0a-18") );
