@@ -145,13 +145,13 @@ void MotorController::handleTick() {
 
     if (!donePrecharge)checkPrecharge();
 
-    if(skipcounter++ > 30)    //A very low priority loop for checks that only need to be done once per second.
+    if(skipcounter++ > 15)    //A very low priority loop for checks that only need to be done once per second.
     {
         skipcounter=0; //Reset our laptimer
 
 
         //Some test simulations if precharge time is set to 12345
-        if(true) // set to true for testing without pedal
+        if(false)
         {
             dcVoltage--;
             if (torqueActual < -500)
