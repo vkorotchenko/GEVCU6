@@ -81,7 +81,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * the parameter values defined here are used instead of those stored in the EEPROM.
  */
 //#define USE_HARD_CODED
-#define ThrottleNumPots			2		//# of pots to use by default
+#define ThrottleNumPots			1		//# of pots to use by default
 #define ThrottleSubtype			1		//subtype 1 is a standard linear pot throttle
 #define ThrottleRegenMinValue	270		//where does Regen stop (1/10 of percent)
 #define ThrottleRegenMaxValue	0		//where Regen is at maximum (1/10 of percent)
@@ -91,8 +91,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define ThrottleMaxRegenValue	70		//how many percent of full power to use at maximum regen
 #define ThrottleCreepValue   	15		//percentage of torque used for creep function (imitate creep of automatic transmission, set 0 to disable)
 #define ThrottleMaxErrValue		150		//tenths of percentage allowable deviation between pedals
-#define Throttle1MinValue		20		//Value ADC reads when pedal is up
-#define Throttle1MaxValue		3150		//Value ADC reads when pedal fully depressed
+#define Throttle1MinValue		562		//Value ADC reads when pedal is up
+#define Throttle1MaxValue		1024		//Value ADC reads when pedal fully depressed
 #define Throttle2MinValue		0		//Value ADC reads when pedal is up
 #define Throttle2MaxValue		0	//Value ADC reads when pedal fully depressed
 #define BrakeMinValue			100		//Value ADC reads when brake is not pressed
@@ -122,11 +122,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define ThrottleADC1		    15  	//Which pin to use
 #define ThrottleADC2			16		//Which pin to use
 #define PrechargeRelay      9 // precharge relay pin digital out
-#define MainContactorRelay  18 // main contactor realy pin - digital out
+#define MainContactorRelay  19 // main contactor realy pin - digital out
 #define CoolFan             255  //output to use for cooling fan
 #define BrakeLight          255 //temperature to turn it off
-#define RevLight            255 //temperature to turn it off
-#define EnableIn            17 //enable  digital input pin  //9
+#define RevLight            255//18 //temperature to turn it off
+#define EnableIn            255//17 //enable  digital input pin  //9
 #define ReverseIn           255 //reverse digital input pin  //
 
 #define DefaultPackCapacity   1200       //in tenths of AH

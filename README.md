@@ -45,3 +45,22 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+FEATHER PINOUT
+3V - 3.3V
+REF - 3.3V
+GND - GND
+A0 - brake adc
+A1 - Throttle 1
+A2 - Throttle 2
+A3 - Enable
+A4 - Reverse 
+A5 - Main contactor
+9 - Precharge
+10 - CoolFan
+11 - BrakeLight
+12  - Rev Light
+
+//CAN bus pins ( CAN shield)
+CanH - CanH
+CanL - CanL
+CanG - CanG

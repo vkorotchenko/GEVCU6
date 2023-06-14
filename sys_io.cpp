@@ -160,9 +160,8 @@ int16_t SystemIO::getAnalogIn(uint8_t pin) {
     if (pin > MAX_PIN) {
         return 0;
     }
-    
-    if (!isInitialized()) return 0;
-    
+    if(pin == 15)
+        Logger::info("Analog read pin: %d , value %d", pin, analogRead(pin));    
     return analogRead(pin);
 }
 

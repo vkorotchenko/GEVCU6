@@ -151,7 +151,7 @@ void MotorController::handleTick() {
 
 
         //Some test simulations if precharge time is set to 12345
-        if(true)
+        if(true) // set to true for testing without pedal
         {
             dcVoltage--;
             if (torqueActual < -500)
