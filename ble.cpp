@@ -2,130 +2,148 @@
 
 Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
 int32_t serviceId;
-int32_t tVoltId;
-int32_t tAmpId;
-int32_t cVoltId;
-int32_t cAmpId;
-int32_t rTime;
+int32_t reqSpeed;
+int32_t reqState;
+int32_t reqTorque;
+int32_t reqAccel;
+int32_t reqRegen;
+int32_t reqShifter;
+int32_t resMotorTemp;
+int32_t resInvTemp;
+int32_t resToruq;
+int32_t resSpeed;
+int32_t resState;
+int32_t resDcVolt;
+int32_t resDcCurrent;
+int32_t outMainCon;
+int32_t outPreCon;
+int32_t outBrake;
+int32_t outCooling;
+int32_t outReverseLight;
+int32_t inReverse;
+int32_t inEnable;
+int32_t inThrottle;
+int32_t inThrottle2;
+int32_t inBrake;
 
 void Ble::setup() {
 
   if ( !ble.begin(VERBOSE_MODE) )
   {
-    Logger::log("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?");
+    Logger::debug("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?");
   }
 
   /* Perform a factory reset to make sure everything is in a known state */
-  Logger::log("Performing a factory reset: ");
+  Logger::debug("Performing a factory reset: ");
   if (! ble.factoryReset() ){
-       Logger::log("Couldn't factory reset");
+       Logger::debug("Couldn't factory reset");
   }
 
   /* Disable command echo from Bluefruit */
   ble.echo(false);
 
-  Logger::log("Requesting Bluefruit info:");
+  Logger::debug("Requesting Bluefruit info:");
   /* Print Bluefruit information */
   ble.info();
 
   /* Change the device name to make it easier to find */
-  Logger::log("Setting device name to %s': ", DISPLAY_NAME);
+  Logger::debug("Setting device name to %s': pao EVCU");
 
   if (! ble.sendCommandCheckOK(F("AT+GAPDEVNAME=Pao EVCU")) ) {
-    Logger::log("Could not set device name?");
+    Logger::debug("Could not set device name?");
   }
 
   /* Add the Service definition */
   /* Service ID should be 1 */
-  Logger::log("Adding the Service definition (UUID = 0x27B0): ");
+  Logger::debug("Adding the Service definition (UUID = 0x27B1): ");
   bool success = ble.sendCommandWithIntReply( F("AT+GATTADDSERVICE=UUID=0x180F"), &serviceId);
   if (! success) {
-    Logger::log("Could not add service");
+    Logger::debug("Could not add service");
   }
 
-  // DMOC REQUESTED // TODO update uuids and len
+  // DMOC REQUESTED
   // 0x232
   // speed 
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF01, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &reqSpeed);
 
   // state
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF02, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &reqState);
 
   //0x233
   // torque
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF03, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &reqTorque);
 
   //0x234
   // accelerate
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF04, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &reqAccel);
   
   //regen
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF05, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &reqRegen);
 
   // 0x236
   // shifter position
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF06, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &reqShifter);
 
   // DMOC RECEIVED
   // temprature status 0x651
   // motor temp
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF07, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &resMotorTemp);
 
   // inv temp
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF08, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &resInvTemp);
 
 
   //torque report 0x23A
   // actual torque
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF09, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &resToruq);
 
   // speed and current 0x23B
   // speed
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF0A, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &resSpeed);
 
   // state
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF0B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &resState);
 
   // HV bus state 0x650
   // dc voltage
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF0C, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &resDcVolt);
 
   // dc current
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF0D, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &resDcCurrent);
 
   // OUTPUTS
   // main contactor
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF0E, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=1, VALUE=0"), &outMainCon);
 
   //precharge contactor
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF0F, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=1, VALUE=0"), &outPreCon);
 
   //brake
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF10, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=1, VALUE=0"), &outBrake);
 
   //cooling
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF11, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=1, VALUE=0"), &outCooling);
 
   //reverse light
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF12, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=1, VALUE=0"), &outReverseLight);
 
 
   // INPUTS
 
   // reverse
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF13, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=1, VALUE=0"), &inReverse);
 
   //enable
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF14, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=1, VALUE=0"), &inEnable);
 
   //throttle 1
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF15, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &inThrottle);
 
   // throttle 2
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF16, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &inThrottle2);
 
   // brake 
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0x2A1B, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &tVoltId);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF17, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &inBrake);
  
 
 
@@ -136,29 +154,44 @@ void Ble::setup() {
   ble.reset();
 }
 
-void Ble::updateValues() {
+void Ble::sendValue(int value, int id) {
   ble.print( F("AT+GATTCHAR=") );
-  ble.print( tVoltId );
+  ble.print( id );
   ble.print( F(",") );
-  ble.println(tVolt, HEX);
-  
+  ble.println(value, HEX);
+
+}
+
+void Ble::sendValue(bool value, int id) {
   ble.print( F("AT+GATTCHAR=") );
-  ble.print( tAmpId );
+  ble.print( id );
   ble.print( F(",") );
-  ble.println(tAmp, HEX);
-  
-  ble.print( F("AT+GATTCHAR=") );
-  ble.print( cVoltId );
-  ble.print( F(",") );
-  ble.println(cVolt, HEX);
-  
-  ble.print( F("AT+GATTCHAR=") );
-  ble.print( cAmpId );
-  ble.print( F(",") );
-  ble.println(cAmp, HEX);
-  
-  ble.print( F("AT+GATTCHAR=") );
-  ble.print( rTime );
-  ble.print( F(",") );
-  ble.println(running_time, HEX);
+  ble.println(value, HEX);
+
+}
+
+void Ble::updateValues(BleData data) {
+  Ble::sendValue(data.reqSpeed, reqSpeed);
+ Ble::sendValue(data.reqState, reqState);
+ Ble::sendValue(data.reqTorque, reqTorque);
+ Ble::sendValue(data.reqAccel, reqAccel);
+ Ble::sendValue(data.reqRegen, reqRegen);
+ Ble::sendValue(data.reqShifter, reqShifter);
+ Ble::sendValue(data.resMotorTemp, resMotorTemp);
+ Ble::sendValue(data.resInvTemp, resInvTemp);
+ Ble::sendValue(data.resToruq, resToruq);
+ Ble::sendValue(data.resSpeed, resSpeed);
+ Ble::sendValue(data.resState, resState);
+ Ble::sendValue(data.resDcVolt, resDcVolt);
+ Ble::sendValue(data.resDcCurrent, resDcCurrent);
+ Ble::sendValue(data.outMainCon, outMainCon);
+ Ble::sendValue(data.outPreCon, outPreCon);
+ Ble::sendValue(data.outBrake, outBrake);
+ Ble::sendValue(data.outCooling, outCooling);
+ Ble::sendValue(data.outReverseLight, outReverseLight);
+ Ble::sendValue(data.inReverse, inReverse);
+ Ble::sendValue(data.inEnable, inEnable);
+ Ble::sendValue(data.inThrottle, inThrottle);
+ Ble::sendValue(data.inThrottle2, inThrottle2);
+ Ble::sendValue(data.inBrake, inBrake);
 }

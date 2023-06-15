@@ -16,8 +16,35 @@
 class Ble {
 public:
     void setup();
-    void updateValues();
+    void updateValues(BleData data);
+     struct BleData {
+      int serviceId;
+      int reqSpeed;
+      int reqState;
+      int reqTorque;
+      int reqAccel;
+      int reqRegen;
+      int reqShifter;
+      int resMotorTemp;
+      int resInvTemp;
+      int resToruq;
+      int resSpeed;
+      int resState;
+      int resDcVolt;
+      int resDcCurrent;
+      bool outMainCon;
+      bool outPreCon;
+      bool outBrake;
+      bool outCooling;
+      bool outReverseLight;
+      bool inReverse;
+      bool inEnable;
+      int inThrottle;
+      int inThrottle2;
+      int inBrake;
+};
 private:
+    void Ble::sendValue(int value, int id);
 };
 
 #endif /* BLE_H_ */
