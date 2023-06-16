@@ -61,6 +61,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define CFG_TICK_INTERVAL_EVIC                      100000
 #define CFG_TICK_INTERVAL_VEHICLE                   100000
 
+#define ble_interval 1000
+
 /*
  * CAN BUS CONFIGURATION
  */

@@ -16,7 +16,7 @@
 class Ble {
 public:
     void setup();
-    void updateValues(BleData data);
+    void updateValues(BleData *data);
     struct BleData {
       int serviceId;
       int reqSpeed;

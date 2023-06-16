@@ -173,29 +173,29 @@ void Ble::sendValue(bool value, int id) {
 
 }
 
-void Ble::updateValues(BleData data) {
-  Ble::sendValue(data.reqSpeed, reqSpeed);
- Ble::sendValue(data.reqState, reqState);
- Ble::sendValue(data.reqTorque, reqTorque);
- Ble::sendValue(data.reqAccel, reqAccel);
- Ble::sendValue(data.reqRegen, reqRegen);
- Ble::sendValue(data.resMotorTemp, resMotorTemp);
- Ble::sendValue(data.resInvTemp, resInvTemp);
- Ble::sendValue(data.resTorque, resTorque);
- Ble::sendValue(data.resSpeed, resSpeed);
- Ble::sendValue(data.resState, resState);
- Ble::sendValue(data.resDcVolt, resDcVolt);
- Ble::sendValue(data.resDcCurrent, resDcCurrent);
- Ble::sendValue(data.outMainCon, outMainCon);
- Ble::sendValue(data.outPreCon, outPreCon);
- Ble::sendValue(data.outBrake, outBrake);
- Ble::sendValue(data.outCooling, outCooling);
- Ble::sendValue(data.outReverseLight, outReverseLight);
- Ble::sendValue(data.inReverse, inReverse);
- Ble::sendValue(data.inEnable, inEnable);
- Ble::sendValue(data.inThrottle, inThrottle);
- Ble::sendValue(data.inBrake, inBrake);
- Ble::sendValue(data.isRunning, isRunning);
- Ble::sendValue(data.isFaulted, isFaulted);
- Ble::sendValue(data.isWarning, isWarning);
+void Ble::updateValues(BleData *data) {
+  Ble::sendValue(data->reqSpeed, reqSpeed);
+  Ble::sendValue(data->reqState, reqState);
+  Ble::sendValue(data->reqTorque, reqTorque);
+  Ble::sendValue(data->reqAccel, reqAccel);
+  Ble::sendValue(data->reqRegen, reqRegen);
+  Ble::sendValue(data->resMotorTemp, resMotorTemp);
+  Ble::sendValue(data->resInvTemp, resInvTemp);
+  Ble::sendValue(data->resTorque, resTorque);
+  Ble::sendValue(data->resSpeed, resSpeed);
+  Ble::sendValue(data->resState, resState);
+  Ble::sendValue(data->resDcVolt, resDcVolt);
+  Ble::sendValue(data->resDcCurrent, resDcCurrent);
+  Ble::sendValue(data->outMainCon, outMainCon);
+  Ble::sendValue(data->outPreCon, outPreCon);
+  Ble::sendValue(data->outBrake, outBrake);
+  Ble::sendValue(data->outCooling, outCooling);
+  Ble::sendValue(data->outReverseLight, outReverseLight);
+  Ble::sendValue(data->inReverse, inReverse);
+  Ble::sendValue(data->inEnable, inEnable);
+  Ble::sendValue(data->inThrottle, inThrottle);
+  Ble::sendValue(data->inBrake, inBrake);
+  Ble::sendValue(data->isRunning, isRunning);
+  Ble::sendValue(data->isFaulted, isFaulted);
+  Ble::sendValue(data->isWarning, isWarning);
 }

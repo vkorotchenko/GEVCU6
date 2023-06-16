@@ -153,6 +153,10 @@ void setup() {
   	timer.setInterval(ble_interval, send_ble_info);
 }
 
+void send_ble_info(){
+  bt->updateValues(bleData);
+}
+
 void loop() {
 #ifdef CFG_TIMER_USE_QUEUING
 	tickHandler.process();
