@@ -31,6 +31,7 @@
 
 #include <Arduino.h>
 #include "config.h"
+#include "ble.h"
 #include "Device.h"
 #include "Throttle.h"
 #include "DeviceManager.h"
@@ -89,7 +90,7 @@ public:
 
     MotorController();
     DeviceType getType();
-    void setup();
+    void setup(Ble::BleData *bleData);
     void handleTick();
     uint32_t getTickInterval();
 

@@ -68,6 +68,9 @@ template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg);
 byte i = 0;
 uint8_t loglevel;
 Ble *bt;
+SimpleTimer timer;
+Ble::BleData *bleData;
+
 
 
 
@@ -76,20 +79,20 @@ Creating objects here is all you need to do to register them. The pointer
 reference will obviously expire at the end of the function but the object
 lives on and is hereafter controlled by the system. 
 */
-void createObjects() {
+void createObjects(Ble::BleData *bleData) {
 	PotThrottle *paccelerator = new PotThrottle();
 	PotBrake *pbrake = new PotBrake();
     VehicleSpecific *vehicleSpecific = new VehicleSpecific();
-	DmocMotorController *dmotorController = new DmocMotorController();
+	DmocMotorController *dmotorController = new DmocMotorController(bleData);
 }
 
-void initializeDevices() {
+void initializeDevices(Ble::BleData *bleData) {
 	/*
 	We used to instantiate all the objects here along with other code. To simplify things this is done somewhat
 	automatically now. Just instantiate your new device object in createObjects above. This takes care of the details
 	so long as you follow the template of how other devices were coded.
 	*/
-	createObjects(); 
+	createObjects(bleData); 
 
 	/*
 	 *	We defer setting up the devices until here. This allows all objects to be instantiated
@@ -134,13 +137,20 @@ void setup() {
 	canHandler.setup();
 	Logger::info("SYSIO init ok");	
 
-	initializeDevices();
-
+	bleData = new Ble::BleData();
 	bt = new Ble();
 	bt->setup();
 
+	initializeDevices(bt);
+
+	systemIO.setup();  
+	Logger::info("SYSIO init ok");	
+
    
 	Logger::info("System Ready");	
+	initializeDevices(bleData);
+
+  	timer.setInterval(ble_interval, send_ble_info);
 }
 
 void loop() {

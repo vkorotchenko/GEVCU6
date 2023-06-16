@@ -31,6 +31,7 @@
 
 #include <Arduino.h>
 #include "config.h"
+#include "ble.h"
 #include "MotorController.h"
 #include "sys_io.h"
 #include "TickHandler.h"
@@ -66,7 +67,7 @@ public:
     virtual void setup();
     void setGear(Gears gear);
 
-    DmocMotorController();
+    DmocMotorController(Ble::BleData *bleData);
     DeviceId getId();
     uint32_t getTickInterval();
     void taperRegen();

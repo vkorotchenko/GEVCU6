@@ -17,17 +17,16 @@ class Ble {
 public:
     void setup();
     void updateValues(BleData data);
-     struct BleData {
+    struct BleData {
       int serviceId;
       int reqSpeed;
       int reqState;
       int reqTorque;
       int reqAccel;
       int reqRegen;
-      int reqShifter;
       int resMotorTemp;
       int resInvTemp;
-      int resToruq;
+      int resTorque;
       int resSpeed;
       int resState;
       int resDcVolt;
@@ -40,9 +39,11 @@ public:
       bool inReverse;
       bool inEnable;
       int inThrottle;
-      int inThrottle2;
       int inBrake;
-};
+      bool isRunning;
+      bool isFaulted;
+      bool isWarning;
+    };
 private:
     void Ble::sendValue(int value, int id);
 };

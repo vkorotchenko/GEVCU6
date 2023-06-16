@@ -7,10 +7,9 @@ int32_t reqState;
 int32_t reqTorque;
 int32_t reqAccel;
 int32_t reqRegen;
-int32_t reqShifter;
 int32_t resMotorTemp;
 int32_t resInvTemp;
-int32_t resToruq;
+int32_t resTorque;
 int32_t resSpeed;
 int32_t resState;
 int32_t resDcVolt;
@@ -23,8 +22,10 @@ int32_t outReverseLight;
 int32_t inReverse;
 int32_t inEnable;
 int32_t inThrottle;
-int32_t inThrottle2;
 int32_t inBrake;
+int32_t isRunning;
+int32_t isFaulted;
+int32_t isWarning;
 
 void Ble::setup() {
 
@@ -80,10 +81,6 @@ void Ble::setup() {
   //regen
   ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF05, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &reqRegen);
 
-  // 0x236
-  // shifter position
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF06, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &reqShifter);
-
   // DMOC RECEIVED
   // temprature status 0x651
   // motor temp
@@ -95,7 +92,7 @@ void Ble::setup() {
 
   //torque report 0x23A
   // actual torque
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF09, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &resToruq);
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF09, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &resTorque);
 
   // speed and current 0x23B
   // speed
@@ -139,11 +136,17 @@ void Ble::setup() {
   //throttle 1
   ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF15, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &inThrottle);
 
-  // throttle 2
-  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF16, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &inThrottle2);
 
   // brake 
   ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF17, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=5, VALUE=0"), &inBrake);
+
+  // STATUS
+  // running
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF18, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=1, VALUE=0"), &isRunning);
+  // fault
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF19, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=1, VALUE=0"), &isFaulted);
+  // warning
+  ble.sendCommandWithIntReply( F("AT+GATTADDCHAR=UUID=0xFF1A, PROPERTIES=0x10, MIN_LEN=1, MAX_LEN=1, VALUE=0"), &isWarning);
  
 
 
@@ -176,10 +179,9 @@ void Ble::updateValues(BleData data) {
  Ble::sendValue(data.reqTorque, reqTorque);
  Ble::sendValue(data.reqAccel, reqAccel);
  Ble::sendValue(data.reqRegen, reqRegen);
- Ble::sendValue(data.reqShifter, reqShifter);
  Ble::sendValue(data.resMotorTemp, resMotorTemp);
  Ble::sendValue(data.resInvTemp, resInvTemp);
- Ble::sendValue(data.resToruq, resToruq);
+ Ble::sendValue(data.resTorque, resTorque);
  Ble::sendValue(data.resSpeed, resSpeed);
  Ble::sendValue(data.resState, resState);
  Ble::sendValue(data.resDcVolt, resDcVolt);
@@ -192,6 +194,8 @@ void Ble::updateValues(BleData data) {
  Ble::sendValue(data.inReverse, inReverse);
  Ble::sendValue(data.inEnable, inEnable);
  Ble::sendValue(data.inThrottle, inThrottle);
- Ble::sendValue(data.inThrottle2, inThrottle2);
  Ble::sendValue(data.inBrake, inBrake);
+ Ble::sendValue(data.isRunning, isRunning);
+ Ble::sendValue(data.isFaulted, isFaulted);
+ Ble::sendValue(data.isWarning, isWarning);
 }
