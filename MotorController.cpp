@@ -603,8 +603,27 @@ void MotorController::loadConfiguration() {
     config->regenTaperLower = RegenTaperLower;
     config->regenTaperUpper = RegenTaperUpper;
 
+    //TODO send config to bt once
+    bluetoothData->configSpeedMax = MaxRPMValue;
+    bluetoothData->configTorqueMax = MaxTorqueValue;
+    bluetoothData->configSpeedSlewRate = RPMSlewRateValue;
+    bluetoothData->configTorqueSlewRate = TorqueSlewRateValue;
+    bluetoothData->configReversePercent = ReversePercent;
+    bluetoothData->configKilowattHrs = KilowattHrs;
+    bluetoothData->configPrechargeR = PrechargeR;
+    bluetoothData->configNominalVolt = NominalVolt;
+    bluetoothData->configPrechargeRelay = PrechargeRelay;
+    bluetoothData->configMainContactorRelay = MainContactorRelay;
+    bluetoothData->configCoolFan = CoolFan;
+    bluetoothData->configCoolOn = CoolOn;
+    bluetoothData->configCoolOff = CoolOff;
+    bluetoothData->configBrakeLight = BrakeLight;
+    bluetoothData->configRevLight = RevLight;
+    bluetoothData->configEnableIn = EnableIn;
+    bluetoothData->configReverseIn = ReverseIn;
+    bluetoothData->configRegenTaperLower = RegenTaperLower;
+    bluetoothData->configRegenTaperUpper = RegenTaperUpper;
+
 
     Logger::info("MaxTorque: %i MaxRPM: %i", config->torqueMax, config->speedMax);
 }
-
-

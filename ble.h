@@ -41,6 +41,26 @@ public:
       bool isRunning;
       bool isFaulted;
       bool isWarning;
+      
+      int configSpeedMax;
+      int configTorqueMax;
+      int configSpeedSlewRate;
+      int configTorqueSlewRate;
+      int configReversePercent;
+      int configKilowattHrs;
+      int configPrechargeR;
+      int configNominalVolt;
+      int configPrechargeRelay;
+      int configMainContactorRelay;
+      int configCoolFan;
+      int configCoolOn;
+      int configCoolOff;
+      int configBrakeLight;
+      int configRevLight;
+      int configEnableIn;
+      int configReverseIn;
+      int configRegenTaperLower;
+      int configRegenTaperUpper;
     };
     void setup();
     void updateValues(BleData *data);
