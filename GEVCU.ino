@@ -68,7 +68,7 @@ template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg);
 byte i = 0;
 uint8_t loglevel;
 Ble *bt;
-SimpleTimer timer;
+SimpleTimer btTimer;
 Ble::BleData *bleData;
 
 
@@ -141,7 +141,7 @@ void setup() {
 	bt = new Ble();
 	bt->setup();
 
-	initializeDevices(bt);
+	initializeDevices(bleData);
 
 	systemIO.setup();  
 	Logger::info("SYSIO init ok");	
@@ -150,7 +150,7 @@ void setup() {
 	Logger::info("System Ready");	
 	initializeDevices(bleData);
 
-  	timer.setInterval(ble_interval, send_ble_info);
+  	btTimer.setInterval(ble_interval, send_ble_info);
 }
 
 void send_ble_info(){
@@ -177,5 +177,5 @@ void loop() {
 	Timer7.loop();
 	Timer8.loop();
     
-
-    Watchdog.reset();}
+    Watchdog.reset();
+}

@@ -45,7 +45,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 extern bool runThrottle; //TODO: remove use of global variables !
 long ms;
-Ble::BleData *bluetoothData;
+Ble::BleData *btData;
 
 DmocMotorController::DmocMotorController(Ble::BleData *bleData) : MotorController() {
     step = SPEED_TORQUE;
@@ -57,7 +57,7 @@ DmocMotorController::DmocMotorController(Ble::BleData *bleData) : MotorControlle
     activityCount = 0;
 //	maxTorque = 2000;
     commonName = "DMOC645 Inverter";
-    bluetoothData = bt;
+    btData = bleData;
 }
 
 void DmocMotorController::setup() {
@@ -66,7 +66,7 @@ void DmocMotorController::setup() {
     Logger::info("add device: DMOC645 (id:%X, %X)", DMOC645, this);
 
     loadConfiguration();
-    MotorController::setup(bluetoothData); // run the parent class version of this function
+    MotorController::setup(btData); // run the parent class version of this function
 
     // register ourselves as observer of 0x23x and 0x65x can frames
     canHandler.attach(this, 0x230, 0x7f0, false);
@@ -110,13 +110,13 @@ void DmocMotorController::handleCanFrame(CAN_FRAME *frame) {
         else {
             temperatureMotor = (StatorTemp - 40) * 10;
         }
-        *bluetoothData->resMotorTemp = temperatureMotor;
-        *bluetoothData->resInvTemp = temperatureInverter;
+        btData->resMotorTemp = temperatureMotor;
+        btData->resInvTemp = temperatureInverter;
         activityCount++;
         break;
     case 0x23A: //torque report
         torqueActual = ((frame->data.bytes[0] * 256) + frame->data.bytes[1]) - 30000;
-        *bluetoothData->resTorque = torqueActual;
+        btData->resTorque = torqueActual;
         activityCount++;
         break;
 
@@ -171,8 +171,8 @@ void DmocMotorController::handleCanFrame(CAN_FRAME *frame) {
         Logger::debug("Reported OpState: %d", temp);
 
 
-        *bluetoothData->resSpeed = speedActual;
-        *bluetoothData->resState = actualState;
+        btData->resSpeed = speedActual;
+        btData->resState = actualState;
         activityCount++;
         break;
 
@@ -184,8 +184,8 @@ void DmocMotorController::handleCanFrame(CAN_FRAME *frame) {
         dcVoltage = ((frame->data.bytes[0] * 256) + frame->data.bytes[1]);
         dcCurrent = ((frame->data.bytes[2] * 256) + frame->data.bytes[3]) - 5000; //offset is 500A, unit = .1A
 
-        *bluetoothData->resDcVolt = dcVoltage;
-        *bluetoothData->resDcCurrent = dcCurrent;
+        btData->resDcVolt = dcVoltage;
+        btData->resDcCurrent = dcCurrent;
 
         activityCount++;
         break;
@@ -276,8 +276,8 @@ void DmocMotorController::sendCmd1() {
 
     output.data.bytes[7] = calcChecksum(output);
     
-    *bluetoothData->reqSpeed = speedRequested;
-    *bluetoothData->reqState = newstate;
+    btData->reqSpeed = speedRequested;
+    btData->reqState = newstate;
 
     Logger::debug("DMOC 0x232 tx: %X %X %X %X %X %X %X %X", output.data.bytes[0], output.data.bytes[1], output.data.bytes[2], output.data.bytes[3],
                   output.data.bytes[4], output.data.bytes[5], output.data.bytes[6], output.data.bytes[7]);
@@ -357,7 +357,7 @@ void DmocMotorController::sendCmd2() {
     output.data.bytes[7] = calcChecksum(output);
 
 
-    *bluetoothData->reqTorque = torqueCommand;
+    btData->reqTorque = torqueCommand;
     //Logger::debug("max torque: %i", maxTorque);
 
     //Logger::debug("requested torque: %i",(((long) throttleRequested * (long) maxTorque) / 1000L));
@@ -389,8 +389,8 @@ void DmocMotorController::sendCmd3() {
     output.data.bytes[7] = calcChecksum(output);
 
 
-    *bluetoothData->reqRegen = regenCalc;
-    *bluetoothData->reqAccel = accelCalc;
+    btData->reqRegen = regenCalc;
+    btData->reqAccel = accelCalc;
 
     canHandler.sendFrame(output);
 }

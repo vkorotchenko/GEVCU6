@@ -173,7 +173,7 @@ void Ble::sendValue(bool value, int id) {
 
 }
 
-void Ble::updateValues(BleData *data) {
+void Ble::updateValues(Ble::BleData *data) {
   Ble::sendValue(data->reqSpeed, reqSpeed);
   Ble::sendValue(data->reqState, reqState);
   Ble::sendValue(data->reqTorque, reqTorque);

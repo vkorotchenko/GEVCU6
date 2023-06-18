@@ -15,8 +15,6 @@
 
 class Ble {
 public:
-    void setup();
-    void updateValues(BleData *data);
     struct BleData {
       int serviceId;
       int reqSpeed;
@@ -44,8 +42,11 @@ public:
       bool isFaulted;
       bool isWarning;
     };
+    void setup();
+    void updateValues(BleData *data);
 private:
-    void Ble::sendValue(int value, int id);
+    void sendValue(int value, int id);
+    void sendValue(bool value, int id);
 };
 
 #endif /* BLE_H_ */

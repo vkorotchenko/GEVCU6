@@ -25,9 +25,10 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
  */
-Ble::BleData *bluetoothData;
 
 #include "MotorController.h"
+
+Ble::BleData *bluetoothData;
 
 MotorController::MotorController() : Device() {
     ready = false;
@@ -141,14 +142,14 @@ void MotorController::handleTick() {
     Throttle *brake = deviceManager.getBrake();
     if (accelerator) {
         throttleRequested = accelerator->getLevel();
-        *bluetoothData->inThrottle = throttleRequested;
-        *bluetoothData->inBrake = 0;
+        bluetoothData->inThrottle = throttleRequested;
+        bluetoothData->inBrake = 0;
 
     }
     if (brake && brake->getLevel() < -10 && brake->getLevel() < accelerator->getLevel()) //if the brake has been pressed it overrides the accelerator.
         throttleRequested = brake->getLevel();
-        *bluetoothData->inThrottle = 0;
-        *bluetoothData->inBrake = throttleRequested;
+        bluetoothData->inThrottle = 0;
+        bluetoothData->inBrake = throttleRequested;
     //Logger::debug("Throttle: %d", throttleRequested);
 
     if (!donePrecharge)checkPrecharge();
@@ -247,7 +248,7 @@ void MotorController::checkPrecharge()
             Logger::info("Starting precharge sequence - wait %i milliseconds", prechargetime);
             Logger::info("PRECHARGE ENABLED...PreCharge:%d, main:%d", 
             systemIO.getDigitalOutput(relay), systemIO.getDigitalOutput(contactor));
-            *bluetoothData->outPreCon = 1;
+            bluetoothData->outPreCon = 1;
 
         
 
@@ -267,7 +268,7 @@ void MotorController::checkPrecharge()
         donePrecharge=true; //Time's up.  Let's don't do ANY of this on future ticks.
         //Generally, we leave the precharge relay on.  This doesn't hurt much in any configuration.  But when using two contactors
         //one positive with a precharge resistor and one on the negative leg to act as precharge, we need to leave precharge on.
-        *bluetoothData->outMainCon = 1;
+        bluetoothData->outMainCon = 1;
 
     }
 }
@@ -303,7 +304,7 @@ void MotorController::coolingcheck()
         }
     }
 
-    *bluetoothData->outCooling = coolfan;
+    bluetoothData->outCooling = coolfan;
 }
 
 //If we have a brakelight output configured, this will set it anytime regen greater than 10 Newton meters
@@ -325,7 +326,7 @@ void MotorController::checkBrakeLight()
             statusBitfield1 &= ~(1 << brakelight);//clear bit to turn off brake light output annunciator
         }
 
-        *bluetoothData->outBrake = brakelight;
+        bluetoothData->outBrake = brakelight;
     }
 
 }
@@ -340,13 +341,13 @@ void MotorController::checkReverseLight()
         {
             systemIO.setDigitalOutput(reverseLight, true); //Turn on reverse light output
             statusBitfield1 |=1 << reverseLight; //set bit to turn on reverse light output annunciator
-            *bluetoothData->outReverseLight = 1;
+            bluetoothData->outReverseLight = 1;
         }
         else
         {
             systemIO.setDigitalOutput(reverseLight, false); //Turn off reverse light output
             statusBitfield1 &= ~(1 << reverseLight);//clear bit to turn off reverselight OUTPUT annunciator
-            *bluetoothData->outReverseLight = 0;
+            bluetoothData->outReverseLight = 0;
         }
     }
 }
@@ -362,14 +363,14 @@ void MotorController:: checkEnableInput()
             setOpState(ENABLE);
             statusBitfield2 |=1 << enableinput; //set bit to turn on ENABLE annunciator
             statusBitfield2 |=1 << 18;//set bit to turn on enable input annunciator
-            *bluetoothData->inEnable = 1;
+            bluetoothData->inEnable = 1;
         }
         else
         {
             setOpState(DISABLED);//If it's off, lets set DISABLED.  These two could just as easily be reversed
             statusBitfield2 &= ~(1 << 18); //clear bit to turn off ENABLE annunciator
             statusBitfield2 &= ~(1 << enableinput);//clear bit to turn off enable input annunciator
-            *bluetoothData->inEnable = 0;
+            bluetoothData->inEnable = 0;
         }
     }
 }
@@ -385,14 +386,14 @@ void MotorController:: checkReverseInput()
             setSelectedGear(REVERSE);
             statusBitfield2 |=1 << 16; //set bit to turn on REVERSE annunciator
             statusBitfield2 |=1 << reverseinput;//setbit to Turn on reverse input annunciator
-            *bluetoothData->inReverse = 1;
+            bluetoothData->inReverse = 1;
         }
         else
         {
             setSelectedGear(DRIVE); //If it's off, lets set to DRIVE.
             statusBitfield2 &= ~(1 << 16); //clear bit to turn off REVERSE annunciator
             statusBitfield2 &= ~(1 << reverseinput);//clear bit to turn off reverse input annunciator
-            *bluetoothData->inReverse = 0;
+            bluetoothData->inReverse = 0;
         }
     }
 }
@@ -400,17 +401,17 @@ void MotorController:: checkReverseInput()
 
 
 bool MotorController::isRunning() {
-    *bluetoothData->isRunning = running;
+    bluetoothData->isRunning = running;
     return running;
 }
 
 bool MotorController::isFaulted() {
-    *bluetoothData->isFaulted = faulted;
+    bluetoothData->isFaulted = faulted;
     return faulted;
 }
 
 bool MotorController::isWarning() {
-    *bluetoothData->isWarning = warning;
+    bluetoothData->isWarning = warning;
     return warning;
 }
 
