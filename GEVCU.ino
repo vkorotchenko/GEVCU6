@@ -105,25 +105,11 @@ void initializeDevices(Ble::BleData *bleData) {
 }
 
 void setup() {
-    //Most boards pre 6.2 have outputs on 2-9 and a problem where their outputs can trigger on for just a quick moment
-    //upon start up. So, try to pull the outputs low as soon as we can just to be sure.
-    //This project is now GEVCU6.2 specific but still, doesn't hurt to set your outputs properly.
-    
-	#ifdef SUPC
-    //Activate the supply monitor at 2.8v and make it hold the CPU in reset under that point
-    //That first value is 1.9V + the value for the supply threshold. So, 9 would be 2.8v, A would be 2.9v, etc
-    
-    //               Thresh  Enable   Force Reset
-    SUPC->SUPC_SMMR = 0xA | (1<<8) | (1<<12);
-	#endif
-	Watchdog.enable(2000);	
+   
+	// if we are not connected to m2515 faether moddule this will reset forever as it is blocked by while loop waiting for CAN signal. 
+	// comment out for debug purposes
+	//Watchdog.enable(3000);	
 
-#ifdef DEBUG_STARTUP_DELAY
-    for (int c = 0; c < 200; c++) {
-        delay(25);  //This delay lets you see startup.  But it breaks DMOC645 really badly.  You have to have comm quickly upon start up
-    	Watchdog.reset();    }
-#endif
-       
 	pinMode(BLINK_LED, OUTPUT);
 	digitalWrite(BLINK_LED, LOW);
     Serial.begin(CFG_SERIAL_SPEED);
