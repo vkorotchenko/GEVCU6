@@ -63,10 +63,16 @@ public:
       int configRegenTaperUpper;
     };
     void setup();
+    void setup_main();
+    void setup_io();
+    void setup_config();
+
     void updateValues(BleData *data);
 private:
     void sendValue(int value, int id);
     void sendValue(bool value, int id);
+    void sendValue(byte value, int id);
+    byte convertToBinary(bool in1, bool in2, bool in3, bool in4, bool in5, bool in6, bool in7, bool in8);
 };
 
 #endif /* BLE_H_ */

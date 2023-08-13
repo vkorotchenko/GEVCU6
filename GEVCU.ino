@@ -150,8 +150,8 @@ void loop() {
 
 	// check if incoming frames are available in the can buffer and process them
 	canHandler.process();
-
-    systemIO.pollInitialization();
+	
+	btTimer.run();
 
 	Timer.loop();
 	Timer1.loop();

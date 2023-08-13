@@ -50,20 +50,6 @@ SystemIO::SystemIO()
     lastInitAttempt = 0;
 }
 
-bool SystemIO::isInitialized()
-{
-    return true;
-}
-
-void SystemIO::pollInitialization()
-{
-    if (isInitialized()) return;
-    if (millis() > (lastInitAttempt + 10))
-    {
-        lastInitAttempt = millis();
-    }
-}
-
 void SystemIO::setSystemType(SystemType systemType) {
         sysType = GEVCU6;
 }
@@ -160,8 +146,7 @@ int16_t SystemIO::getAnalogIn(uint8_t pin) {
     if (pin > MAX_PIN) {
         return 0;
     }
-    if(pin == 15)
-        Logger::info("Analog read pin: %d , value %d", pin, analogRead(pin));    
+
     return analogRead(pin);
 }
 

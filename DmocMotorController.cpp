@@ -313,8 +313,6 @@ void DmocMotorController::sendCmd2() {
 
     torqueCommand = 30000; //set offset  for zero torque commanded
 
-    Logger::info("Throttle requested: %i", throttleRequested);
-
     torqueRequested=0;
     if (actualState == ENABLE) { //don't even try sending torque commands until the DMOC reports it is ready
         if (selectedGear == DRIVE) {
